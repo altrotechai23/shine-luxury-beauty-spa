@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { createCategory,  } from "@/actions/category";
 import Card from "@/components/ui/card";
-import Button from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import PageHeader from "@/components/ui/page-header";
 import StatCard from "@/components/ui/stat-card";
 import { FolderKanban } from "lucide-react";
