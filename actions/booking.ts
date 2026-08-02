@@ -20,7 +20,11 @@ export async function createBooking(data: unknown) {
       fullName: booking.fullName,
       phone: booking.phone,
       email: booking.email,
-      service: booking.service,
+      service: {
+        connect: {
+            id: booking.service,
+        },
+        },
       therapist: booking.therapist,
       date: new Date(booking.date),
       time: booking.time,
