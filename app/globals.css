@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f5;
+  --foreground: #1f1f1f;
+
+  --card: #ffffff;
+
+  --champagne: #c8a97e;
+  --rose-gold: #b88972;
+
+  --cream: #f5efe7;
+
+  --beige: #e8ddd0;
+
+  --espresso: #5d4037;
+
+  --luxury-black: #111111;
+
+  --radius: 1.25rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family: var(--font-sans);
+
+  overflow-x: hidden;
+
+  text-rendering: optimizeLegibility;
+
+  -webkit-font-smoothing: antialiased;
+
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
+}
+
+::selection {
+  background: var(--champagne);
+  color: white;
+}
+
+img {
+  user-select: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+section {
+  position: relative;
+}
+
+.container {
+  width: min(92%, 1280px);
+  margin-inline: auto;
+}
+
+.luxury-gradient {
+  background:
+    radial-gradient(circle at top, rgba(200,169,126,.25), transparent 40%),
+    #faf8f5;
+}
+
+.glass {
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(255,255,255,.5);
+}
+
+.text-gradient {
+  background: linear-gradient(
+      90deg,
+      var(--espresso),
+      var(--champagne)
+  );
+
+  -webkit-background-clip: text;
+  color: transparent;
 }
