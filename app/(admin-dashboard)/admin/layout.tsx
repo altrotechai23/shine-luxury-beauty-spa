@@ -1,23 +1,13 @@
-import type { ReactNode } from "react";
-import Sidebar from "@/components/admin/Sidebar";
-import Header from "@/components/admin/Header";
+import AdminShell from "@/components/admin/AdminShell";
 
 export default function AdminLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-stone-50">
-      <Sidebar />
-
-      <div className="flex flex-1 flex-col">
-        <Header />
-
-        <main className="flex-1 p-8">
-          {children}
-        </main>
-      </div>
-    </div>
+    <AdminShell>
+      {children}
+    </AdminShell>
   );
 }

@@ -1,22 +1,37 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function Card({
+export default function Card({
   children,
   className,
-}: CardProps) {
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      whileHover={{
+        y: -4,
+      }}
+      transition={{
+        duration: .35,
+      }}
       className={cn(
-        "rounded-[32px] border border-neutral-200 bg-white p-8 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl",
+        "rounded-3xl border border-stone-200 bg-white p-6 shadow-sm hover:shadow-xl",
         className
       )}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
