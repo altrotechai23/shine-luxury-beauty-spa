@@ -63,7 +63,7 @@ export default async function CategoriesPage() {
       <div className="rounded-2xl border bg-white overflow-hidden">
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-  {categories.map((category: import("@prisma/client").PrismaClient) => (
+  {categories.map((category: any) => (
     <Card key={category.id}>
       <div className="space-y-4">
         <div>
