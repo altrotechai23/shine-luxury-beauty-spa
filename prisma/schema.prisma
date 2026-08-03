@@ -27,22 +27,23 @@ model Category {
 }
 
 model Service {
-  id          String    @id @default(cuid())
+  id          String @id @default(cuid())
 
   title       String
-  slug        String    @unique
-
+  slug        String @unique
   description String
 
   duration    Int
-
   price       Float
 
-  image        String?
-  featured     Boolean @default(false)
+  image       String?
+  displayOrder Int @default(0)
 
-  categoryId   String
-  category     Category @relation(fields: [categoryId], references: [id])
+  featured    Boolean @default(false)
+  active      Boolean @default(true) // NEW
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
 
   appointments Appointment[]
 
@@ -90,6 +91,7 @@ model Testimonial {
   featured Boolean @default(false)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model GalleryImage {
@@ -102,6 +104,7 @@ model GalleryImage {
   category String?
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model FAQ {
@@ -112,6 +115,7 @@ model FAQ {
   answer String
 
   order Int @default(0)
+  updatedAt DateTime @updatedAt
 }
 
 model Setting {
@@ -136,4 +140,5 @@ model Setting {
   heroTitle String?
 
   heroSubtitle String?
+  updatedAt DateTime @updatedAt
 }
