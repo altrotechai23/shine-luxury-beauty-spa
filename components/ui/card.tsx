@@ -27,7 +27,7 @@ export default function Card({
         duration: .35,
       }}
       className={cn(
-        "rounded-3xl border border-stone-200 bg-white p-6 shadow-sm hover:shadow-xl",
+        className="rounded-3xl border bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border -neutral-300 p-6",
         className
       )}
     >

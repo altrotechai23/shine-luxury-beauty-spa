@@ -1,43 +1,96 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { categorySchema } from "@/lib/validators/category";
 import { revalidatePath } from "next/cache";
 
 export async function createCategory(formData: FormData) {
-  const name = formData.get("name")?.toString().trim() || "";
-  const slug = formData.get("slug")?.toString().trim() || "";
-  const description = formData.get("description")?.toString().trim() || "";
+  const result = categorySchema.safeParse({
+    name: formData.get("name"),
+    slug: formData.get("slug"),
+    description: formData.get("description"),
+  });
 
-  if (!name) {
-    throw new Error("Category name is required.");
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
   }
 
   const exists = await prisma.category.findUnique({
     where: {
-      slug,
+      slug: result.data.slug,
     },
   });
 
   if (exists) {
-    throw new Error("A category with this slug already exists.");
+    return {
+      success: false,
+      errors: {
+        slug: ["Slug already exists"],
+      },
+    };
   }
 
   await prisma.category.create({
-    data: {
-      name,
-      slug,
-      description,
-    },
+    data: result.data,
   });
 
   revalidatePath("/admin/categories");
-  revalidatePath("/");
+
+  return {
+    success: true,
+  };
 }
 
+export async function updateCategory(formData: FormData) {
+  const id = formData.get("id") as string;
 
+  const result = categorySchema.safeParse({
+    name: formData.get("name"),
+    slug: formData.get("slug"),
+    description: formData.get("description"),
+  });
 
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
 
+  const exists = await prisma.category.findFirst({
+    where: {
+      slug: result.data.slug,
+      NOT: {
+        id,
+      },
+    },
+  });
 
+  if (exists) {
+    return {
+      success: false,
+      errors: {
+        slug: ["Slug already exists"],
+      },
+    };
+  }
+
+  await prisma.category.update({
+    where: {
+      id,
+    },
+    data: result.data,
+  });
+
+  revalidatePath("/admin/categories");
+
+  return {
+    success: true,
+  };
+}
 
 export async function deleteCategory(formData: FormData) {
   const id = formData.get("id") as string;
@@ -49,4 +102,8 @@ export async function deleteCategory(formData: FormData) {
   });
 
   revalidatePath("/admin/categories");
+
+  return {
+    success: true,
+  };
 }
