@@ -40,11 +40,11 @@ export default async function HomePage() {
       <SpecialOffer />
 
       <Gallery
-        // images={gallery}
+        images={gallery}
       />
 
       <Testimonials
-        // testimonials={testimonials}
+        testimonials={testimonials}
       />
 
       <BookingCTA />
