@@ -84,7 +84,7 @@ export default async function ServicesPage() {
 
                 {service.featured && (
                   <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
-                    Featured
+                    Featured.
                   </span>
                 )}
 
