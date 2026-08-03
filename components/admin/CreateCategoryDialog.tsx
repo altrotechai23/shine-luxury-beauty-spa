@@ -10,7 +10,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {Button }from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import { createCategory } from "@/actions/category";
 
 export default function CreateCategoryDialog() {
@@ -32,7 +32,7 @@ export default function CreateCategoryDialog() {
     return (
         <Dialog>
 
-            <DialogTrigger>
+            <DialogTrigger >
 
                 <Button>
 
@@ -94,7 +94,7 @@ export default function CreateCategoryDialog() {
                     />
 
                     <Button
-                        
+                        loading={pending}
                         type="submit"
                     >
                         Create
