@@ -6,17 +6,48 @@ import ShineExperience from "@/components/sections/ShineExperience";
 import SpecialOffer from "@/components/sections/SpecialOffer";
 import Testimonials from "@/components/sections/Testimonials";
 
-export default function HomePage() {
+import { getSettings } from "@/lib/data/settings";
+import { getFeaturedServices } from "@/lib/data/services";
+import { getGalleryImages } from "@/lib/data/gallery";
+import { getTestimonials } from "@/lib/data/testimonials";
+
+export const dynamic = "force-dynamic";
+
+
+export default async function HomePage() {
+  const [
+    settings,
+    featuredServices,
+    gallery,
+    testimonials,
+  ] = await Promise.all([
+    getSettings(),
+    getFeaturedServices(),
+    getGalleryImages(),
+    getTestimonials(),
+  ]);
+
   return (
     <>
-      <Hero />
-      <FeaturedServices />
-      <ShineExperience  />
-      <SpecialOffer />
-      <Gallery />
-      <Testimonials />
-      <BookingCTA />
+      <Hero settings={settings} />
 
+      <FeaturedServices
+        services={featuredServices}
+      />
+
+      <ShineExperience />
+
+      <SpecialOffer />
+
+      <Gallery
+        // images={gallery}
+      />
+
+      <Testimonials
+        // testimonials={testimonials}
+      />
+
+      <BookingCTA />
     </>
   );
 }
