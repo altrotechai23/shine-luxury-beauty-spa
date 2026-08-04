@@ -57,7 +57,7 @@ export default function Navbar() {
               src="/logo-no-background.png"
               alt="Shine Luxury Beauty Spa"
               width={180}
-              height={60}
+              height={80}
               priority
               className="h-14 w-auto object-contain transition duration-300 hover:scale-105"
             />
