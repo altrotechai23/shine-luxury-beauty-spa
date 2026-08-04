@@ -10,6 +10,7 @@ import { getSettings } from "@/lib/data/settings";
 import { getFeaturedServices } from "@/lib/data/services";
 import { getGalleryImages } from "@/lib/data/gallery";
 import { getTestimonials } from "@/lib/data/testimonials";
+import FloatingWhatsApp from "@/components/ui/FloatingWhatsApp";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export default async function HomePage() {
       <Testimonials
         testimonials={testimonials}
       />
-
+      <FloatingWhatsApp />
       <BookingCTA />
     </>
   );

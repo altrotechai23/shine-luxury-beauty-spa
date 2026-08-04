@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 import BookingWizard from "@/components/booking/BookingWizard";
+import FloatingWhatsApp from "@/components/ui/FloatingWhatsApp";
 
 export const metadata = {
   title: "Book Appointment",
@@ -55,7 +56,7 @@ export default async function BookingPage() {
         />
 
       </section>
-
+<FloatingWhatsApp />
     </main>
   );
 }
