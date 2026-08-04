@@ -45,10 +45,6 @@ export default function FloatingWhatsApp() {
           className="group flex items-center gap-3 rounded-full border border-white/20 bg-[#25D366]/90 px-5 py-4 text-white shadow-2xl backdrop-blur-xl transition hover:scale-105 hover:bg-[#25D366]"
         >
           <FaWhatsapp className="text-3xl" />
-
-          <span className="hidden whitespace-nowrap text-sm font-medium md:block">
-            Need help? Chat with us
-          </span>
         </Link>
       </motion.div>
     </motion.div>
