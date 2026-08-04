@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { Menu, Phone } from "lucide-react";
-import { useState } from "react";
+import { Menu, Phone, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const links = [
   { name: "Home", href: "/" },
@@ -13,88 +15,167 @@ const links = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 30);
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () =>
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+  }, []);
 
   return (
     <>
-     <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5">
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "border-b border-white/10 bg-[#241814]/80 shadow-2xl backdrop-blur-xl"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-5">
+
           {/* Logo */}
-          <Link href="/" className="space-y-0.5">
-            <h1 className="font-heading text-2xl font-semibold tracking-wide">
-              SHINE
-            </h1>
-            <p className="text-xs uppercase tracking-[0.35em] text-neutral-500">
-              Luxury Beauty Spa
-            </p>    
+
+          <Link
+            href="/"
+            className="flex items-center"
+          >
+            <Image
+              src="/logo-no-background.png"
+              alt="Shine Luxury Beauty Spa"
+              width={180}
+              height={60}
+              priority
+              className="h-14 w-auto object-contain transition duration-300 hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 md:flex">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-               className="text-sm font-medium text-white/90 hover:text-white transition"
-              >
-                {link.name}
-              </Link>
-            ))}
+
+          <nav className="hidden items-center gap-10 lg:flex">
+            {links.map((link) => {
+              const active =
+                pathname === link.href;
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative text-sm font-medium tracking-wide transition-all duration-300 ${
+                    active
+                      ? "text-white"
+                      : "text-white/75 hover:text-white"
+                  }`}
+                >
+                  {link.name}
+
+                  <span
+                    className={`absolute -bottom-2 left-0 h-[2px] rounded-full bg-[#C89A5C] transition-all duration-300 ${
+                      active
+                        ? "w-full"
+                        : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Right */}
-          <div className="hidden items-center gap-3 md:flex">
+          {/* Right Side */}
+
+          <div className="hidden items-center gap-4 lg:flex">
+
             <Link
               href="tel:+27788702149"
-              className="rounded-full p-3 text-white hover:bg-white/10"
-              aria-label="Call us"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition hover:bg-white/10"
             >
               <Phone size={18} />
             </Link>
 
             <Link
               href="/booking"
-              className="rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+              className="rounded-full bg-[#6A4535] px-7 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-105 hover:bg-[#7E5342]"
             >
               Book Appointment
             </Link>
+
           </div>
 
-          {/* Mobile */}
+          {/* Mobile Button */}
+
           <button
             onClick={() => setOpen(!open)}
-            className="rounded-full p-2 md:hidden"
-            aria-label="Toggle menu"
+            className="rounded-full border border-white/20 bg-white/10 p-3 text-white backdrop-blur lg:hidden"
           >
-            <Menu />
+            {open ? (
+              <X size={22} />
+            ) : (
+              <Menu size={22} />
+            )}
           </button>
+
         </div>
       </header>
 
       {/* Mobile Menu */}
-      {open && (
-        <div className="fixed inset-0 z-40 bg-white pt-24 md:hidden">
-          <nav className="flex flex-col gap-6 px-8">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="border-b border-neutral-200 pb-3 text-lg"
-              >
-                {link.name}
-              </Link>
-            ))}
 
-            <Link
-              href="/booking"
-              className="mt-6 rounded-full bg-black py-4 text-center font-medium text-white"
-            >
-              Book Appointment
-            </Link>
+      <div
+        className={`fixed inset-0 z-40 bg-[#241814]/95 backdrop-blur-2xl transition-all duration-500 lg:hidden ${
+          open
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="flex h-full flex-col justify-center px-10">
+
+          <nav className="space-y-8">
+
+            {links.map((link) => {
+
+              const active =
+                pathname === link.href;
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={`block text-3xl font-light transition ${
+                    active
+                      ? "text-[#C89A5C]"
+                      : "text-white hover:text-[#C89A5C]"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+
           </nav>
+
+          <Link
+            href="/booking"
+            onClick={() => setOpen(false)}
+            className="mt-14 rounded-full bg-[#6A4535] py-5 text-center text-lg font-semibold text-white transition hover:bg-[#7E5342]"
+          >
+            Book Appointment
+          </Link>
+
         </div>
-      )}
+      </div>
     </>
   );
 }

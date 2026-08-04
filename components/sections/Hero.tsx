@@ -58,8 +58,8 @@ export default function Hero({ settings } : HeroProps) {
       {/* Decorative Glow */}
       <div className="absolute -left-24 top-40 h-96 w-96 rounded-full bg-[#C89A73]/10 blur-3xl" />
 
-      <div className="relative z-10 flex h-full items-center">
-        <div className="mx-auto w-full max-w-7xl px-6">
+      <div className="relative z-10 flex h-full items-center pt-20">
+        <div className="mx-auto w-full max-w-7xl px-6 mt-20">
           <motion.div
             initial={{
               opacity: 0,
@@ -72,10 +72,10 @@ export default function Hero({ settings } : HeroProps) {
             transition={{
               duration: 1,
             }}
-            className="max-w-3xl md:pt-20"
+            className="max-w-3xl pt- md:pt-20"
           >
             {/* Business Name */}
-            <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm uppercase tracking-[0.35em] text-white backdrop-blur-xl">
+            <span className="inline-flex items-center mt-10 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm uppercase tracking-[0.35em] text-white backdrop-blur-xl">
               {businessName}
             </span>
 
