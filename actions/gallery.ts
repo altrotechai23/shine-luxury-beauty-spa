@@ -23,7 +23,7 @@ export async function createGalleryImage(formData: FormData) {
   });
 
   revalidatePath("/admin/gallery");
-
+  revalidatePath("/");
   return {
     success: true,
   };
@@ -69,7 +69,7 @@ export async function deleteGalleryImage(formData: FormData) {
   });
 
   revalidatePath("/admin/gallery");
-
+  revalidatePath("/");
   return {
     success: true,
   };

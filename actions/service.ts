@@ -45,7 +45,7 @@ export async function createService(formData: FormData) {
   });
 
   revalidatePath("/admin/services");
-
+  revalidatePath("/");
   return {
     success: true,
   };
@@ -81,7 +81,7 @@ export async function updateService(formData: FormData) {
   });
 
   revalidatePath("/admin/services");
-
+  revalidatePath("/");
   return {
     success: true,
   };
@@ -95,6 +95,6 @@ export async function deleteService(formData: FormData) {
       id,
     },
   });
-
+  revalidatePath("/");
   revalidatePath("/admin/services");
 }
