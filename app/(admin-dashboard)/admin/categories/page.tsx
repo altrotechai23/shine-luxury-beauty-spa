@@ -8,7 +8,7 @@ import CategorySheet from "@/components/admin/category-sheet";
 import FadeIn from "@/components/ui/fade-in";
 import { deleteCategory } from "@/actions/category";
 import { FolderKanban } from "lucide-react";
-
+export const dynamic = "force-dynamic";
 export default async function CategoriesPage() {
   const categories = await prisma.category.findMany({
     include: {
