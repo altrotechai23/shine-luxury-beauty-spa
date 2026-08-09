@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import {
-  ArrowLeft,
   ArrowRight,
   Camera,
   ChevronLeft,
@@ -13,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { GalleryImage } from "@prisma/client";
 
 interface Props {
@@ -23,17 +22,22 @@ interface Props {
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1600&auto=format&fit=crop";
 
-const categories = [
-  "All",
-];
+const categories = ["All"];
+
+type SwipeDirection = 1 | -1;
 
 export default function GalleryPage({ images }: Props) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState<SwipeDirection>(1);
+
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchCurrentX = useRef<number | null>(null);
 
   /*
   ---------------------------------------------------------
-  Categories
+  CATEGORIES
   ---------------------------------------------------------
   */
 
@@ -45,15 +49,12 @@ export default function GalleryPage({ images }: Props) {
           Boolean(category && category.trim())
       );
 
-    return [
-      ...categories,
-      ...Array.from(new Set(dynamicCategories)),
-    ];
+    return [...categories, ...Array.from(new Set(dynamicCategories))];
   }, [images]);
 
   /*
   ---------------------------------------------------------
-  Filtering
+  FILTERING
   ---------------------------------------------------------
   */
 
@@ -69,7 +70,7 @@ export default function GalleryPage({ images }: Props) {
 
   /*
   ---------------------------------------------------------
-  Selected image
+  SELECTED IMAGE
   ---------------------------------------------------------
   */
 
@@ -80,11 +81,12 @@ export default function GalleryPage({ images }: Props) {
 
   /*
   ---------------------------------------------------------
-  Open / close
+  OPEN / CLOSE
   ---------------------------------------------------------
   */
 
   function openLightbox(index: number) {
+    setDirection(1);
     setSelectedIndex(index);
   }
 
@@ -94,12 +96,14 @@ export default function GalleryPage({ images }: Props) {
 
   /*
   ---------------------------------------------------------
-  Navigation
+  NAVIGATION
   ---------------------------------------------------------
   */
 
   function nextImage() {
     if (!filteredImages.length) return;
+
+    setDirection(1);
 
     setSelectedIndex((current) => {
       if (current === null) return 0;
@@ -113,6 +117,8 @@ export default function GalleryPage({ images }: Props) {
   function previousImage() {
     if (!filteredImages.length) return;
 
+    setDirection(-1);
+
     setSelectedIndex((current) => {
       if (current === null) return 0;
 
@@ -124,7 +130,63 @@ export default function GalleryPage({ images }: Props) {
 
   /*
   ---------------------------------------------------------
-  Keyboard controls
+  TOUCH SWIPE
+  ---------------------------------------------------------
+  */
+
+  function handleTouchStart(
+    event: React.TouchEvent<HTMLDivElement>
+  ) {
+    const touch = event.touches[0];
+
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+    touchCurrentX.current = touch.clientX;
+  }
+
+  function handleTouchMove(
+    event: React.TouchEvent<HTMLDivElement>
+  ) {
+    if (touchStartX.current === null) return;
+
+    const touch = event.touches[0];
+
+    touchCurrentX.current = touch.clientX;
+  }
+
+  function handleTouchEnd() {
+    if (
+      touchStartX.current === null ||
+      touchCurrentX.current === null
+    ) {
+      return;
+    }
+
+    const deltaX =
+      touchCurrentX.current - touchStartX.current;
+
+    const absoluteDeltaX = Math.abs(deltaX);
+
+    /*
+     * Ignore tiny movements.
+     * This prevents accidental navigation.
+     */
+    if (absoluteDeltaX > 60) {
+      if (deltaX < 0) {
+        nextImage();
+      } else {
+        previousImage();
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchCurrentX.current = null;
+  }
+
+  /*
+  ---------------------------------------------------------
+  KEYBOARD CONTROLS
   ---------------------------------------------------------
   */
 
@@ -145,22 +207,16 @@ export default function GalleryPage({ images }: Props) {
       }
     };
 
-    window.addEventListener(
-      "keydown",
-      handleKeyDown
-    );
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener(
-        "keydown",
-        handleKeyDown
-      );
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedIndex, filteredImages.length]);
 
   /*
   ---------------------------------------------------------
-  Body lock
+  BODY LOCK
   ---------------------------------------------------------
   */
 
@@ -179,7 +235,7 @@ export default function GalleryPage({ images }: Props) {
 
   /*
   ---------------------------------------------------------
-  Empty state
+  EMPTY STATE
   ---------------------------------------------------------
   */
 
@@ -262,8 +318,7 @@ export default function GalleryPage({ images }: Props) {
             </h1>
 
             <p className="mx-auto mt-6 max-w-md leading-8 text-white/50">
-              Our latest beauty transformations will
-              appear here soon.
+              Our latest beauty transformations will appear here soon.
             </p>
           </motion.div>
         </div>
@@ -273,6 +328,10 @@ export default function GalleryPage({ images }: Props) {
 
   return (
     <>
+      {/* =====================================================
+          MAIN GALLERY
+      ===================================================== */}
+
       <section className="relative min-h-screen overflow-hidden pb-24">
         <Background />
 
@@ -360,9 +419,8 @@ export default function GalleryPage({ images }: Props) {
                 sm:leading-9
               "
             >
-              Explore the artistry, detail and
-              transformations created at SHINE Luxury
-              Beauty Spa.
+              Explore the artistry, detail and transformations
+              created at SHINE Luxury Beauty Spa.
             </p>
           </motion.div>
 
@@ -383,13 +441,7 @@ export default function GalleryPage({ images }: Props) {
               delay: 0.25,
               duration: 0.8,
             }}
-            className="
-              mt-12
-              flex
-              flex-wrap
-              items-center
-              gap-3
-            "
+            className="mt-12 flex flex-wrap items-center gap-3"
           >
             <div
               className="
@@ -516,10 +568,10 @@ export default function GalleryPage({ images }: Props) {
         </div>
 
         {/* =================================================
-            GALLERY
+            GALLERY GRID
         ================================================= */}
 
-        <div className="relative z-10 mx-auto mt-16 max-w-7xl px-5 sm:px-6 sm:mt-20">
+        <div className="relative z-10 mx-auto mt-16 max-w-7xl px-5 sm:mt-20 sm:px-6">
           <AnimatePresence mode="popLayout">
             <motion.div
               key={activeCategory}
@@ -569,7 +621,7 @@ export default function GalleryPage({ images }: Props) {
       </section>
 
       {/* =====================================================
-          LIGHTBOX
+          FULLSCREEN LIGHTBOX
       ===================================================== */}
 
       <AnimatePresence>
@@ -599,7 +651,7 @@ export default function GalleryPage({ images }: Props) {
             onClick={closeLightbox}
           >
             {/* =================================================
-                BACKGROUND IMAGE BLUR
+                BLURRED BACKGROUND
             ================================================= */}
 
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -633,7 +685,7 @@ export default function GalleryPage({ images }: Props) {
                 absolute
                 right-4
                 top-4
-                z-30
+                z-50
                 flex
                 h-12
                 w-12
@@ -663,7 +715,7 @@ export default function GalleryPage({ images }: Props) {
                 absolute
                 left-5
                 top-5
-                z-30
+                z-50
                 rounded-full
                 border
                 border-white/10
@@ -679,34 +731,33 @@ export default function GalleryPage({ images }: Props) {
             >
               {String(selectedIndex + 1).padStart(2, "0")}
               {" / "}
-              {String(filteredImages.length).padStart(
-                2,
-                "0"
-              )}
+              {String(filteredImages.length).padStart(2, "0")}
             </div>
 
             {/* =================================================
-                IMAGE CONTAINER
+                IMAGE VIEWER
             ================================================= */}
 
             <motion.div
               key={selectedImage.id}
               initial={{
                 opacity: 0,
-                scale: 0.94,
-                y: 15,
+                x: direction === 1 ? 80 : -80,
+                scale: 0.97,
               }}
               animate={{
                 opacity: 1,
+                x: 0,
                 scale: 1,
-                y: 0,
               }}
               exit={{
                 opacity: 0,
-                scale: 0.96,
+                x: direction === 1 ? -80 : 80,
+                scale: 0.97,
               }}
               transition={{
                 duration: 0.35,
+                ease: [0.22, 1, 0.36, 1],
               }}
               className="
                 relative
@@ -717,10 +768,12 @@ export default function GalleryPage({ images }: Props) {
                 max-w-6xl
                 items-center
                 justify-center
+                touch-pan-y
               "
-              onClick={(event) =>
-                event.stopPropagation()
-              }
+              onClick={(event) => event.stopPropagation()}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
               <div
                 className="
@@ -751,25 +804,37 @@ export default function GalleryPage({ images }: Props) {
                   sizes="100vw"
                 />
 
-                {/* Bottom information */}
+                {/* =================================================
+                    BOTTOM INFORMATION
+                ================================================= */}
 
                 <div
                   className="
+                    pointer-events-none
                     absolute
                     bottom-0
                     left-0
                     right-0
                     bg-gradient-to-t
-                    from-black/80
+                    from-black/85
                     via-black/40
                     to-transparent
                     p-6
-                    pt-20
+                    pt-24
                     sm:p-10
-                    sm:pt-28
+                    sm:pt-32
                   "
                 >
-                  <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                  <div
+                    className="
+                      flex
+                      flex-col
+                      gap-5
+                      sm:flex-row
+                      sm:items-end
+                      sm:justify-between
+                    "
+                  >
                     <div>
                       <span
                         className="
@@ -805,8 +870,7 @@ export default function GalleryPage({ images }: Props) {
                       </h2>
                     </div>
 
-                    <button
-                      type="button"
+                    <div
                       className="
                         hidden
                         items-center
@@ -824,16 +888,15 @@ export default function GalleryPage({ images }: Props) {
                       "
                     >
                       <Maximize2 size={14} />
-
-                      View
-                    </button>
+                      Explore
+                    </div>
                   </div>
                 </div>
               </div>
             </motion.div>
 
             {/* =================================================
-                PREVIOUS
+                PREVIOUS BUTTON
             ================================================= */}
 
             <button
@@ -847,7 +910,7 @@ export default function GalleryPage({ images }: Props) {
                 absolute
                 left-3
                 top-1/2
-                z-30
+                z-50
                 flex
                 h-12
                 w-12
@@ -871,7 +934,7 @@ export default function GalleryPage({ images }: Props) {
             </button>
 
             {/* =================================================
-                NEXT
+                NEXT BUTTON
             ================================================= */}
 
             <button
@@ -885,7 +948,7 @@ export default function GalleryPage({ images }: Props) {
                 absolute
                 right-3
                 top-1/2
-                z-30
+                z-50
                 flex
                 h-12
                 w-12
@@ -909,15 +972,27 @@ export default function GalleryPage({ images }: Props) {
             </button>
 
             {/* =================================================
-                MOBILE HINT
+                MOBILE SWIPE INDICATOR
             ================================================= */}
 
-            <div
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay: 0.5,
+              }}
               className="
+                pointer-events-none
                 absolute
                 bottom-5
                 left-1/2
-                z-30
+                z-50
                 -translate-x-1/2
                 rounded-full
                 border
@@ -934,7 +1009,7 @@ export default function GalleryPage({ images }: Props) {
               "
             >
               Swipe to explore
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1002,8 +1077,6 @@ function GalleryCard({
         sm:rounded-[36px]
       "
     >
-      {/* Image */}
-
       <Image
         src={image.image || FALLBACK_IMAGE}
         alt={
@@ -1023,7 +1096,7 @@ function GalleryCard({
         "
       />
 
-      {/* Dark overlay */}
+      {/* Overlay */}
 
       <div
         className="
@@ -1040,7 +1113,7 @@ function GalleryCard({
         "
       />
 
-      {/* Top badge */}
+      {/* Explore badge */}
 
       <div
         className="
@@ -1068,7 +1141,6 @@ function GalleryCard({
         "
       >
         <Maximize2 size={11} />
-
         Explore
       </div>
 
@@ -1136,7 +1208,6 @@ function GalleryCard({
           "
         >
           Open experience
-
           <ArrowRight size={12} />
         </div>
       </div>
