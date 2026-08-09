@@ -1,67 +1,161 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+} from "lucide-react";
 import { motion } from "framer-motion";
-import type { BookingData } from "./BookingWizard";
 
 interface Props {
   currentStep: number;
-  booking: BookingData;
   onNext: () => void;
   onPrevious: () => void;
+  booking: {
+    serviceId: string;
+    date: string;
+    time: string;
+    fullName: string;
+    phone: string;
+    email: string;
+  };
 }
 
 export default function BookingNavigation({
   currentStep,
-  booking,
   onNext,
   onPrevious,
+  booking,
 }: Props) {
-  const isLastStep = currentStep === 2;
-
   const canContinue =
-    (currentStep === 0 && booking.serviceId !== "") ||
-    (currentStep === 1 &&
-      booking.date !== "" &&
-      booking.time !== "") ||
+    currentStep === 0
+      ? Boolean(booking.serviceId)
+      : currentStep === 1
+      ? Boolean(
+          booking.date &&
+            booking.time
+        )
+      : Boolean(
+          booking.fullName &&
+            booking.phone &&
+            booking.email
+        );
+
+  const isLastStep =
     currentStep === 2;
 
   return (
-    <motion.div
-      layout
-      className="sticky bottom-0 z-40 mt-10 border-t bg-white/90 backdrop-blur-xl"
+    <div
+      className="
+        fixed
+        inset-x-0
+        bottom-0
+        z-50
+        border-t
+        border-black/[0.06]
+        bg-white/90
+        px-4
+        pb-[max(12px,env(safe-area-inset-bottom))]
+        pt-3
+        backdrop-blur-2xl
+
+        sm:px-8
+      "
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+      <div
+        className="
+          mx-auto
+          flex
+          max-w-7xl
+          items-center
+          gap-3
+        "
+      >
+        {/* BACK */}
 
         <button
           type="button"
           onClick={onPrevious}
           disabled={currentStep === 0}
-          className="inline-flex h-12 items-center gap-2 rounded-full border border-neutral-300 px-6 font-medium transition hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+          className="
+            flex
+            h-14
+            w-14
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            border
+            border-black/[0.07]
+            bg-white
+            text-neutral-400
+            transition
+            hover:text-neutral-900
+            disabled:pointer-events-none
+            disabled:opacity-30
+
+            sm:w-auto
+            sm:px-6
+          "
         >
-          <ArrowLeft size={18} />
-          Previous
+          <ArrowLeft size={17} />
+
+          <span className="ml-2 hidden text-xs sm:block">
+            Back
+          </span>
         </button>
 
-        <div className="text-center hidden md:block">
-          <p className="text-sm text-neutral-500">
-            Step {currentStep + 1} of 3
-          </p>
-        </div>
+        {/* CONTINUE */}
 
-       {!isLastStep && (
-            <button
-                type="button"
-                onClick={onNext}
-                disabled={!canContinue}
-                className="inline-flex h-12 items-center gap-2 rounded-full bg-[#6A4535] px-8 font-semibold text-white transition hover:bg-[#593a2d] disabled:cursor-not-allowed disabled:bg-neutral-300"
-            >
-                Next
-                <ArrowRight size={18} />
-            </button>
-            )}
+        <motion.button
+          type="button"
+          disabled={!canContinue}
+          onClick={onNext}
+          whileTap={
+            canContinue
+              ? { scale: 0.98 }
+              : undefined
+          }
+          className="
+            flex
+            h-14
+            flex-1
+            items-center
+            justify-center
+            gap-3
+            rounded-full
+            bg-[#171B1C]
+            px-6
+            text-sm
+            font-medium
+            text-white
+            shadow-[0_10px_40px_rgba(0,0,0,.12)]
+            transition-all
+            duration-300
 
+            disabled:cursor-not-allowed
+            disabled:bg-neutral-200
+            disabled:text-neutral-400
+
+            sm:flex-none
+            sm:min-w-[190px]
+          "
+        >
+          {isLastStep ? (
+            <>
+              Confirm appointment
+
+              <Check size={16} />
+            </>
+          ) : (
+            <>
+              Continue
+
+              <ArrowRight size={17} />
+            </>
+          )}
+        </motion.button>
       </div>
-    </motion.div>
+    </div>
   );
 }

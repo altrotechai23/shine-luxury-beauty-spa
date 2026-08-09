@@ -1,11 +1,10 @@
 "use client";
 
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Prisma } from "@prisma/client";
+import { AnimatePresence, motion } from "framer-motion";
 
-import BookingProgress from "./BookingProgress";
+import BookingHeader from "./BookingHeader";
 import BookingNavigation from "./BookingNavigation";
 
 import StepService from "./StepService";
@@ -27,7 +26,6 @@ export interface BookingData {
   serviceId: string;
   date: string;
   time: string;
-
   fullName: string;
   phone: string;
   email: string;
@@ -38,121 +36,403 @@ export default function BookingWizard({
   services,
 }: Props) {
   const [step, setStep] = useState(0);
+  const [success, setSuccess] = useState(false);
 
-  const [success, setSuccess] =
-    useState(false);
-
-  const [booking, setBooking] =
-    useState<BookingData>({
-      serviceId: "",
-
-      date: "",
-
-      time: "",
-
-      fullName: "",
-
-      phone: "",
-
-      email: "",
-
-      notes: "",
-    });
-
-const topRef = useRef<HTMLDivElement>(null);
+  const [booking, setBooking] = useState<BookingData>({
+    serviceId: "",
+    date: "",
+    time: "",
+    fullName: "",
+    phone: "",
+    email: "",
+    notes: "",
+  });
 
   const selectedService = services.find(
-  (service) => service.id === booking.serviceId
-);
+    (service) => service.id === booking.serviceId
+  );
 
-useEffect(() => {
-  const timer = setTimeout(() => {
-    topRef.current?.scrollIntoView({
+  /*
+  =========================================================
+  STEP SCROLL
+  =========================================================
+  */
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
       behavior: "smooth",
-      block: "start",
     });
-  }, 120);
+  }, [step]);
 
-  return () => clearTimeout(timer);
-}, [step]);
+  /*
+  =========================================================
+  UPDATE BOOKING
+  =========================================================
+  */
 
   function updateBooking(
     values: Partial<BookingData>
   ) {
-    setBooking((prev) => ({
-      ...prev,
+    setBooking((previous) => ({
+      ...previous,
       ...values,
     }));
   }
 
+  /*
+  =========================================================
+  NAVIGATION
+  =========================================================
+  */
+
   function next() {
-    setStep((s) =>
-      Math.min(s + 1, 2)
+    setStep((current) =>
+      Math.min(current + 1, 2)
     );
   }
 
   function previous() {
-    setStep((s) =>
-      Math.max(s - 1, 0)
+    setStep((current) =>
+      Math.max(current - 1, 0)
     );
   }
+
+  /*
+  =========================================================
+  SUCCESS
+  =========================================================
+  */
 
   if (success) {
     return (
-      <BookingSuccess />
+      <div className="min-h-[100svh] bg-[#061519]">
+        <BookingSuccess />
+      </div>
     );
   }
 
+  /*
+  =========================================================
+  MAIN BOOKING EXPERIENCE
+  =========================================================
+  */
+
   return (
-    <div   ref={topRef} className="mx-auto max-w-6xl">
+    <div
+      className="
+        relative
+        min-h-[100svh]
+        overflow-hidden
+        bg-[#061519]
+        text-white
+      "
+    >
+      {/* =================================================
+          ATMOSPHERE
+      ================================================= */}
 
-      <BookingProgress
-        currentStep={step}
-      />
+      <div className="pointer-events-none fixed inset-0 z-0">
+        {/* Cyan glow */}
 
-      <div className="mt-12 rounded-[40px] bg-white p-8 shadow-xl">
+        <div
+          className="
+            absolute
+            -left-[280px]
+            -top-[180px]
+            h-[600px]
+            w-[600px]
+            rounded-full
+            bg-[#62AAB5]/10
+            blur-[160px]
+          "
+        />
 
-        {step === 0 && (
-          <StepService
-            services={services}
-            booking={booking}
-            updateBooking={
-              updateBooking
-            }
-          />
-        )}
+        {/* Gold glow */}
 
-        {step === 1 && (
-          <StepDateTime
-            booking={booking}
-            updateBooking={
-              updateBooking
-            }
-          />
-        )}
+        <div
+          className="
+            absolute
+            -right-[300px]
+            top-[30%]
+            h-[650px]
+            w-[650px]
+            rounded-full
+            bg-[#D7C0A0]/8
+            blur-[180px]
+          "
+        />
 
-        {step === 2 && (
-          <StepCustomer
-            booking={booking}
-            service={selectedService}
-            updateBooking={
-              updateBooking
-            }
-            onSuccess={() =>
-              setSuccess(true)
-            }
-          />
-        )}
+        {/* Bottom glow */}
 
+        <div
+          className="
+            absolute
+            -bottom-[350px]
+            left-1/2
+            h-[700px]
+            w-[700px]
+            -translate-x-1/2
+            rounded-full
+            bg-[#62AAB5]/6
+            blur-[180px]
+          "
+        />
+
+        {/* Subtle grid */}
+
+        <div
+          className="
+            absolute
+            inset-0
+            opacity-[0.025]
+            [background-image:linear-gradient(rgba(255,255,255,.8)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.8)_1px,transparent_1px)]
+            [background-size:80px_80px]
+          "
+        />
+
+        {/* Vignette */}
+
+        <div
+          className="
+            absolute
+            inset-0
+            bg-[radial-gradient(circle_at_center,transparent_20%,#061519_100%)]
+            opacity-70
+          "
+        />
       </div>
 
-      <BookingNavigation
-        currentStep={step}
-        onNext={next}
-        onPrevious={previous}
-        booking={booking}
-      />
+      {/* =================================================
+          CONTENT
+      ================================================= */}
 
+      <div className="relative z-10 min-h-[100svh]">
+        {/* =================================================
+            HEADER
+        ================================================= */}
+
+        <BookingHeader
+          currentStep={step}
+          onBack={() => {
+            if (step === 0) {
+              window.location.href = "/";
+            } else {
+              previous();
+            }
+          }}
+        />
+
+        {/* =================================================
+            STEP INDICATOR
+        ================================================= */}
+
+        <div className="mx-auto w-full max-w-7xl px-5 pt-4 sm:px-8 lg:px-12">
+          <div className="flex items-center gap-2">
+            {[0, 1, 2].map((item) => {
+              const active = item === step;
+              const completed = item < step;
+
+              return (
+                <motion.div
+                  key={item}
+                  initial={false}
+                  animate={{
+                    width:
+                      active || completed
+                        ? 42
+                        : 18,
+                    opacity:
+                      active || completed
+                        ? 1
+                        : 0.35,
+                  }}
+                  transition={{
+                    duration: 0.35,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className={`
+                    h-[3px]
+                    rounded-full
+                    ${
+                      active || completed
+                        ? "bg-[#62AAB5]"
+                        : "bg-white/20"
+                    }
+                  `}
+                />
+              );
+            })}
+
+            <span
+              className="
+                ml-2
+                text-[10px]
+                uppercase
+                tracking-[0.25em]
+                text-white/35
+              "
+            >
+              {String(step + 1).padStart(2, "0")} / 03
+            </span>
+          </div>
+        </div>
+
+        {/* =================================================
+            FULL SCREEN STEP
+        ================================================= */}
+
+        <main
+          className="
+            mx-auto
+            flex
+            min-h-[calc(100svh-145px)]
+            w-full
+            max-w-7xl
+            flex-col
+            px-5
+            pb-32
+            pt-8
+
+            sm:px-8
+            sm:pt-10
+
+            lg:px-12
+          "
+        >
+          <AnimatePresence
+            mode="wait"
+            initial={false}
+          >
+            {/* =================================================
+                STEP 1 — SERVICE
+            ================================================= */}
+
+            {step === 0 && (
+              <motion.section
+                key="service"
+                initial={{
+                  opacity: 0,
+                  x: 30,
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  x: -30,
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="
+                  flex
+                  min-h-[calc(100svh-200px)]
+                  flex-1
+                  flex-col
+                "
+              >
+                <StepService
+                  services={services}
+                  booking={booking}
+                  updateBooking={updateBooking}
+                />
+              </motion.section>
+            )}
+
+            {/* =================================================
+                STEP 2 — DATE & TIME
+            ================================================= */}
+
+            {step === 1 && (
+              <motion.section
+                key="datetime"
+                initial={{
+                  opacity: 0,
+                  x: 30,
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  x: -30,
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="
+                  flex
+                  min-h-[calc(100svh-200px)]
+                  flex-1
+                  flex-col
+                "
+              >
+                <StepDateTime
+                  booking={booking}
+                  updateBooking={updateBooking}
+                />
+              </motion.section>
+            )}
+
+            {/* =================================================
+                STEP 3 — CUSTOMER
+            ================================================= */}
+
+            {step === 2 && (
+              <motion.section
+                key="customer"
+                initial={{
+                  opacity: 0,
+                  x: 30,
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  x: -30,
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="
+                  flex
+                  min-h-[calc(100svh-200px)]
+                  flex-1
+                  flex-col
+                "
+              >
+                <StepCustomer
+                  booking={booking}
+                  service={selectedService}
+                  updateBooking={updateBooking}
+                  onSuccess={() =>
+                    setSuccess(true)
+                  }
+                />
+              </motion.section>
+            )}
+          </AnimatePresence>
+        </main>
+
+        {/* =================================================
+            FIXED BOTTOM NAVIGATION
+        ================================================= */}
+
+        <BookingNavigation
+          currentStep={step}
+          onNext={next}
+          onPrevious={previous}
+          booking={booking}
+        />
+      </div>
     </div>
   );
 }

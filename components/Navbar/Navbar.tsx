@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 import DesktopNav from "./DesktopNav";
@@ -9,10 +10,24 @@ import Logo from "./Logo";
 import MobileMenu from "./MobileMenu";
 
 export default function Navbar() {
+  const pathname = usePathname();
+
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  /*
+  |--------------------------------------------------------------------------
+  | Booking is a dedicated app-like experience
+  |--------------------------------------------------------------------------
+  */
+
+  const isBookingPage =
+    pathname === "/booking" ||
+    pathname.startsWith("/booking/");
+
   useEffect(() => {
+    if (isBookingPage) return;
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
@@ -24,9 +39,22 @@ export default function Navbar() {
     });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
     };
-  }, []);
+  }, [isBookingPage]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Do NOT render the marketing navbar on booking
+  |--------------------------------------------------------------------------
+  */
+
+  if (isBookingPage) {
+    return null;
+  }
 
   return (
     <>
@@ -71,15 +99,11 @@ export default function Navbar() {
             }
           `}
         >
-          {/* =========================================
-              DESKTOP NAVIGATION
-          ========================================= */}
+          {/* DESKTOP */}
 
           <DesktopNav compact={scrolled} />
 
-          {/* =========================================
-              MOBILE NAVIGATION
-          ========================================= */}
+          {/* MOBILE */}
 
           <div
             className={`
@@ -117,20 +141,20 @@ export default function Navbar() {
               scrolled={scrolled}
               open={menuOpen}
               onToggle={() =>
-                setMenuOpen((value) => !value)
+                setMenuOpen(
+                  (value) => !value
+                )
               }
             />
           </div>
         </motion.div>
       </header>
 
-      {/* =========================================
-          MOBILE MENU
-      ========================================= */}
-
       <MobileMenu
         open={menuOpen}
-        onClose={() => setMenuOpen(false)}
+        onClose={() =>
+          setMenuOpen(false)
+        }
       />
     </>
   );
