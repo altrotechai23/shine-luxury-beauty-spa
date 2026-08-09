@@ -1,12 +1,26 @@
-import type { ReactNode } from "react";
-import AppLayout from "@/components/layout/AppLayout";
-
-interface MarketingLayoutProps {
-  children: ReactNode;
-}
+import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/layout/Footer";
+import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp";
+import ScrollProgress from "@/components/layout/ScrollProgress";
 
 export default function MarketingLayout({
   children,
-}: MarketingLayoutProps) {
-  return <AppLayout>{children}</AppLayout>;
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <ScrollProgress />
+
+      <Navbar />
+
+      <main className="relative min-h-screen overflow-x-hidden">
+        {children}
+      </main>
+
+      <Footer />
+
+      {/* <FloatingWhatsApp /> */}
+    </>
+  );
 }

@@ -1,0 +1,37 @@
+//# allFunctionsCalledOnLoad
+loaded_h_0(function(_){var window=this;
+_.fUp=_.y("nHLHI",[]);
+_.v("nHLHI");
+_.gUp=class extends _.Ai{constructor(){super();this.ka=_.LZ({cLd:0});this.oa=new Map}sPd(a){this.ka.subscribe(a)}wa(){return this.oa.get(this.ka.value.cLd)}Aa(a,b){this.oa.has(a)?_.pf(new _.zg(`Attempted to register a corroboration model for draft id ${a}, which already has a model registered`)):(this.oa.set(a,b),this.ka.value.cLd===a&&(this.ka.value=Object.assign({},this.ka.value,{Sz:b})))}};_.ss(_.fUp,_.gUp);
+_.x();
+_.hUr=_.y("ja6yPb",[]);
+_.v("ja6yPb");
+_.sEt=class extends _.Ai{constructor(){super();this.Aa=0;google.lfm||(google.lfm=[]);this.oa=_.LZ({view:0});this.wa=_.LZ(0)}subscribeToInputPlateState(a){this.wa.subscribe(a)}expand(){var a;(a=this.ka)==null||a.expand()}collapse(a=!1,b,c=!1){var d;return(d=this.ka)==null?void 0:d.collapse(a,b,c)}};_.ss(_.hUr,_.sEt);
+_.x();
+_.nUr=_.y("Pwo57d",[_.fUp]);
+_.v("Pwo57d");
+var JGs;JGs=function(a,{Sz:b}){if(b){var c;(c=a.ka)==null||c.unsubscribe();c=b.La(({count:d})=>{a.oa.value={kWc:d}});a.ka={model:b,unsubscribe:c}}else{let d;(d=a.ka)==null||d.unsubscribe();a.ka=null}};_.KGs=class extends _.Ai{static Ra(){return{model:{RJb:_.gUp}}}constructor(a){super();this.ka=null;this.oa=_.LZ({kWc:void 0});a.model.RJb.sPd(b=>{JGs(this,b)})}I$a(a){this.oa.subscribe(a)}};_.ss(_.nUr,_.KGs);
+_.x();
+_.v("JjeCTe");
+var zDt=class extends _.m{constructor(a){super(a)}oa(){return _.B(this,2)}Aa(a){return _.ai(this,2,a)}wa(){return _.af(this,2)}Ba(){return _.Ak(this,2)}};zDt.prototype.Za="ZoDrGf";var ADt={bu(){return["aof"]},Qk(a,b){_.Kw(new _.Ow(a.ka,b),"aof",b.Aa,b.wa)},xl(a,b){_.Nw(new _.Ow(b.ka,a),a.Ba,a.oa,"aof")}};var BDt=null,CDt=class extends _.Mx{constructor(a,b){super(a);new _.Nx(this);this.Ko=_.Kx(b,this,new _.Jx(ADt))}static Mm(){return zDt}static un(a){return BDt?BDt:BDt=_.Ix().then(b=>{b=new CDt(zDt,b);b.initialize(a);return b})}};_.tp.ZoDrGf=_.sp;var FDt,HDt,GDt;_.EDt=async function(){var a=(0,_.Wf)(),b=a();a=a(1);try{if(_.DDt()){try{a(await b(_.PWh()))}catch(c){a()}a(await b(new Promise(c=>{(0,_.qo)(c,450)})))}}finally{b()}};_.DDt=function(){var a=document.querySelectorAll("[data-svs]");for(let b=0;b<a.length;b++){let c=a[b].getBoundingClientRect();if(c.width>0||c.height>0)return!0}if(a=document.getElementById("Sva75c"))if(a=a.getBoundingClientRect(),a.width>0||a.height>0)return!0;return!1};
+FDt=function(a,b){var c;b=(c=b.oa())!=null&&c?2:0;a.Hpa.value!==b&&(a.Hpa.value=b)};HDt=async function(a,b){var c=(0,_.Wf)(),d=c();c=c(1);try{let e;if(((e=a.Ai.get().oa())!=null?e:!1)!==b){c(await d(GDt()));a.ka=!0;try{let f=a.Ai.transition(g=>{b?g.Aa(!0):g.wa();return g});c(await d(f.run()));FDt(a,a.Ai.get())}finally{c(),a.ka=!1}}}finally{d()}};GDt=async function(){return _.EDt()};
+_.IDt=class extends _.Ai{static Ra(){return{service:{ppa:_.X5p},De:{yhe:CDt}}}constructor(a){super();this.hasSubmittedQuery=_.LZ(!1);this.Hpa=_.LZ(0);this.ka=!1;a.service.ppa.kId(_.lUr,this);this.Ai=a.De.yhe;FDt(this,this.Ai.get());this.Ai.listen(b=>{this.ka||FDt(this,b)});this.Hpa.subscribe(this.oa.bind(this))}oa(a,b){if(a!==b&&(b!==void 0||a!==0))switch(a){case 2:HDt(this,!0);break;default:HDt(this,!1)}}};_.ss(_.lUr,_.IDt);
+_.x();
+_.bVr=_.y("C6pisf",[]);
+var l5p=class extends _.m{constructor(a){super(a)}oa(){return _.u(this,1)}wa(){return _.u(this,2)}};var m5p=class extends _.m{constructor(a){super(a)}oa(){return _.ph(this,l5p,1,_.qh())}};_.n5p=class extends _.m{constructor(a){super(a)}wb(){return _.p(this,m5p,1)}Sq(){return _.u(this,2)}Ka(){return _.Jj(this,3,_.qh())}Aa(){return _.ij(this,9)}Bb(){return _.Kk(this,9)}Ua(){return _.ria(_.ij(this,4))}ob(){return _.B(this,5)}Xa(){return _.B(this,10)}Sa(){return _.u(this,17)}Pa(){return _.B(this,6,!0)}hb(){return _.B(this,7)}Qa(){return _.u(this,8,"#e2eeff")}oa(){return _.u(this,14)}iX(){return _.u(this,15)}wa(){return _.u(this,16)}Ba(){return _.u(this,19)}Ga(){return _.u(this,22)}La(){return _.u(this,
+20)}yb(){return _.u(this,21)}};_.n5p.prototype.Za="XDxzyc";
+_.v("C6pisf");
+_.Pxs=class extends _.m{constructor(a){super(a)}};_.Pxs.prototype.Za="U7pSpf";_.Qxs=class extends _.Ai{static Ra(){return{Ef:{Ksc:_.Pxs}}}constructor(a){super();this.ka=new Map;var b;if((b=a.Ef.Ksc)==null?0:_.ph(b,_.n5p,1,_.qh()))for(let c of _.ph(a.Ef.Ksc,_.n5p,1,_.qh()))this.ka.set(c.Sq(),_.LZ({Zea:c}))}oa(a,b){var c=this.ka.get(b);c||(c=_.LZ({Zea:new _.n5p}),this.ka.set(b,c));c.subscribe((d,e)=>{a(d.Zea,e==null?void 0:e.Zea)})}};_.ss(_.bVr,_.Qxs);
+_.x();
+_.zUr=_.y("JwXdLe",[]);
+_.bqq=class extends _.m{constructor(a){super(a)}Dq(){return _.Zj(this,1)}Uv(){return _.gh(this,3)}hG(){return _.gh(this,4)}getAttribute(){return _.gh(this,5)}setAttribute(a){return _.fh(this,5,a)}hasAttribute(){return _.rh(this,5)}Oy(){return _.p(this,_.vH,8)}I0(){return _.Zj(this,10)}ZG(){return _.dk(this,12)}Caa(){return _.gh(this,17)}xya(){return _.Zj(this,19)}Bt(){return _.gh(this,21)}getViewerType(){return _.dk(this,23)}Kw(a){return _.$h(this,23,a)}spe(){return _.gh(this,24)}hoe(){return _.gh(this,
+25)}};_.bqq.prototype.Za="tkwAde";
+_.cqq=function(a,b){return _.Ci(a,1,b)};_.dqq=function(a,b){return _.fh(a,3,b)};_.eqq=function(a,b){return _.fh(a,4,b)};_.fqq=function(a,b){return _.Eb(a,_.vH,8,b)};_.gqq=function(a,b){return _.$h(a,12,b)};_.hqq=function(a,b){return _.fh(a,17,b)};_.iqq=function(a,b){return _.Ci(a,19,b)};
+var iDg;iDg=class extends _.m{constructor(a){super(a)}fka(){return _.Cj(this,2)}getUrl(){return _.u(this,3)}Vc(){return _.rh(this,3)}getTitle(){return _.u(this,4)}setTitle(a){return _.fh(this,4,a)}ld(){return _.rh(this,4)}Rj(){return _.u(this,5)}getUniqueId(){return _.Se(this,7)}};
+_.jDg=class extends _.m{constructor(a){super(a)}V8(){return _.ij(this,27)}Ahb(){return _.Kk(this,27)}wQb(){return _.u(this,11)}Lu(){return _.Cj(this,18)}xZ(){return _.ph(this,iDg,24,_.qh())}poa(){return _.cj(this,iDg,24)}a6(){return _.Cj(this,26)}};_.kDg=function(a){return _.p(a,_.jDg,4)};
+_.v("JwXdLe");
+_.wGt=class extends _.Ai{constructor(){super();this.LO=!1;this.oa=null;this.Nvb=_.LZ({Dn:new _.bqq});this.ka=_.LZ({element:null});this.Aa=_.LZ(0)}Ka(a){this.Nvb.subscribe((b,c)=>{a(b.Dn,c==null?void 0:c.Dn)})}Ga(a){this.ka.subscribe((b,c)=>{a(b.element,c==null?void 0:c.element)})}Ca(a){this.Aa.subscribe((b,c)=>{a(b,c)})}i$(a){this.LO&&this.ka.value!=null?this.oa=a:this.ka.value={element:a}}wa(a){this.LO=a;this.LO||this.oa==null||(this.ka.value={element:this.oa},this.oa=null)}Ba(a){this.Aa.value=a}};
+_.ss(_.zUr,_.wGt);
+_.x();
+});
+// Google Inc.

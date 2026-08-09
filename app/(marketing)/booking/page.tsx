@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 import BookingWizard from "@/components/booking/BookingWizard";
-import FloatingWhatsApp from "@/components/ui/FloatingWhatsApp";
+import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp";
 
 export const metadata = {
   title: "Book Appointment",
