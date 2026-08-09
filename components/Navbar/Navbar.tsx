@@ -19,99 +19,119 @@ export default function Navbar() {
 
     handleScroll();
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
-    return () =>
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
     <>
-    <header
-    className={`
-        fixed
-        inset-x-0
-        top-0
-        z-50
-
-        transition-all
-        duration-300
-
-        ${
-            menuOpen
-                ? "opacity-0 pointer-events-none"
-                : "opacity-100"
-        }
-    `}
->
-      <motion.div
-        layout
-        transition={{
-          type: "spring",
-          stiffness: 180,
-          damping: 22,
-        }}
+      <header
         className={`
-          mx-auto
-          flex
-          max-w-7xl
-          items-center
-          justify-between
+          fixed
+          inset-x-0
+          top-0
+          z-50
 
           transition-all
-          duration-500
+          duration-300
 
           ${
-            scrolled
-              ? "px-4 pt-4"
-              : "px-5 pt-5"
+            menuOpen
+              ? "pointer-events-none opacity-0"
+              : "opacity-100"
           }
         `}
       >
-        {/* Desktop */}
-        <DesktopNav compact={scrolled} />
-
-        {/* Mobile */}
-        <div
+        <motion.div
+          layout
+          transition={{
+            type: "spring",
+            stiffness: 180,
+            damping: 22,
+          }}
           className={`
             mx-auto
             flex
-            h-16
-            w-full
+            max-w-7xl
             items-center
             justify-between
-
-            rounded-full
 
             transition-all
             duration-500
 
-            lg:hidden
-
             ${
               scrolled
-                ? "border border-white/10 bg-black/30 px-4 backdrop-blur-2xl shadow-xl"
-                : "bg-transparent px-2"
+                ? "px-4 pt-4"
+                : "px-5 pt-5"
             }
           `}
         >
-          <Logo compact={scrolled} />
+          {/* =========================================
+              DESKTOP NAVIGATION
+          ========================================= */}
 
-          <MobileNav
+          <DesktopNav compact={scrolled} />
+
+          {/* =========================================
+              MOBILE NAVIGATION
+          ========================================= */}
+
+          <div
+            className={`
+              mx-auto
+              flex
+              h-16
+              w-full
+              items-center
+              justify-between
+
+              rounded-full
+
+              transition-all
+              duration-500
+
+              lg:hidden
+
+              ${
+                scrolled
+                  ? `
+                    border
+                    border-white/10
+                    bg-black/30
+                    px-4
+                    shadow-xl
+                    backdrop-blur-2xl
+                  `
+                  : "bg-transparent px-2"
+              }
+            `}
+          >
+            <Logo compact={scrolled} />
+
+            <MobileNav
               scrolled={scrolled}
               open={menuOpen}
-              onToggle={() => setMenuOpen(v => !v)}
-          />
-        </div>
-      </motion.div>
-    </header>
-    <MobileMenu
-    open={menuOpen}
-    onClose={() => setMenuOpen(false)}
-/>
+              onToggle={() =>
+                setMenuOpen((value) => !value)
+              }
+            />
+          </div>
+        </motion.div>
+      </header>
+
+      {/* =========================================
+          MOBILE MENU
+      ========================================= */}
+
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+      />
     </>
   );
 }
