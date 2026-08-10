@@ -27,7 +27,6 @@ export default function ServiceGrid({
   categories,
 }: Props) {
   const [search, setSearch] = useState("");
-
   const [selectedCategory, setSelectedCategory] =
     useState("all");
 
@@ -37,14 +36,20 @@ export default function ServiceGrid({
   const filteredServices = useMemo(() => {
     let items = [...services];
 
-    // Search
+    /*
+    =========================================================
+    SEARCH
+    =========================================================
+    */
 
     if (search.trim()) {
       const q = search.toLowerCase();
 
       items = items.filter(
         (service) =>
-          service.title.toLowerCase().includes(q) ||
+          service.title
+            .toLowerCase()
+            .includes(q) ||
           service.description
             .toLowerCase()
             .includes(q) ||
@@ -54,30 +59,35 @@ export default function ServiceGrid({
       );
     }
 
-    // Category
+    /*
+    =========================================================
+    CATEGORY
+    =========================================================
+    */
 
     if (selectedCategory !== "all") {
       items = items.filter(
         (service) =>
-          service.categoryId ===
-          selectedCategory
+          service.categoryId === selectedCategory
       );
     }
 
-    // Sort
+    /*
+    =========================================================
+    SORT
+    =========================================================
+    */
 
     switch (sort) {
       case "price-low":
         items.sort(
-          (a, b) =>
-            a.price - b.price
+          (a, b) => a.price - b.price
         );
         break;
 
       case "price-high":
         items.sort(
-          (a, b) =>
-            b.price - a.price
+          (a, b) => b.price - a.price
         );
         break;
 
@@ -90,9 +100,7 @@ export default function ServiceGrid({
 
       case "name":
         items.sort((a, b) =>
-          a.title.localeCompare(
-            b.title
-          )
+          a.title.localeCompare(b.title)
         );
         break;
 
@@ -134,84 +142,179 @@ export default function ServiceGrid({
   ]);
 
   return (
-    <div className="space-y-12">
+    <div>
+      {/* =====================================================
+          FILTER BAR
+      ===================================================== */}
 
-      <ServiceFilters
-        categories={categories}
-        selectedCategory={
-          selectedCategory
-        }
-        onCategoryChange={
-          setSelectedCategory
-        }
-        search={search}
-        onSearchChange={setSearch}
-        sort={sort}
-        onSortChange={setSort}
-      />
+      <div className="sticky top-3 z-30 mb-10">
+        <div
+          className="
+            rounded-[24px]
+            border
+            border-black/[0.06]
+            bg-white/80
+            p-2
+            shadow-[0_15px_50px_rgba(0,0,0,0.06)]
+            backdrop-blur-2xl
+          "
+        >
+          <ServiceFilters
+            categories={categories}
+            selectedCategory={
+              selectedCategory
+            }
+            onCategoryChange={
+              setSelectedCategory
+            }
+            search={search}
+            onSearchChange={setSearch}
+            sort={sort}
+            onSortChange={setSort}
+          />
+        </div>
+      </div>
 
-      {filteredServices.length ===
-      0 ? (
+      {/* =====================================================
+          RESULT COUNT
+      ===================================================== */}
+
+      <div className="mb-7 flex items-center justify-between">
+        <span className="text-[9px] uppercase tracking-[0.3em] text-black/30">
+          Available treatments
+        </span>
+
+        <span className="text-xs tabular-nums text-black/30">
+          {String(
+            filteredServices.length
+          ).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* =====================================================
+          EMPTY STATE
+      ===================================================== */}
+
+      {filteredServices.length === 0 ? (
         <motion.div
           initial={{
             opacity: 0,
+            y: 15,
           }}
           animate={{
             opacity: 1,
+            y: 0,
           }}
-          className="rounded-[32px] border border-dashed border-neutral-300 bg-neutral-50 py-24 text-center"
+          className="
+            flex
+            min-h-[320px]
+            items-center
+            justify-center
+            rounded-[32px]
+            border
+            border-dashed
+            border-black/10
+            bg-white/50
+            px-6
+            text-center
+          "
         >
-          <h3 className="text-3xl font-semibold">
-            No services found
-          </h3>
+          <div>
+            <div className="text-[9px] uppercase tracking-[0.3em] text-black/30">
+              Nothing here
+            </div>
 
-          <p className="mt-4 text-neutral-500">
-            Try changing your
-            search or selecting
-            another category.
-          </p>
+            <h3 className="mt-4 font-heading text-3xl tracking-[-0.03em]">
+              No treatments found
+            </h3>
+
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-black/40">
+              Try another search or explore
+              one of our other categories.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setSelectedCategory("all");
+              }}
+              className="
+                mt-7
+                rounded-full
+                border
+                border-black/10
+                px-5
+                py-2.5
+                text-[9px]
+                uppercase
+                tracking-[0.25em]
+                text-black/60
+                transition
+                hover:bg-black
+                hover:text-white
+              "
+            >
+              View everything
+            </button>
+          </div>
         </motion.div>
       ) : (
+        /* ===================================================
+           SERVICES
+        =================================================== */
+
         <motion.div
           layout
-          className="grid gap-8 md:grid-cols-2 xl:grid-cols-3"
-        >
-          <AnimatePresence>
+          className="
+            grid
+            grid-cols-1
+            gap-x-6
+            gap-y-8
 
+            sm:grid-cols-2
+            lg:grid-cols-3
+          "
+        >
+          <AnimatePresence mode="popLayout">
             {filteredServices.map(
-              (service) => (
+              (service, index) => (
                 <motion.div
                   key={service.id}
                   layout
                   initial={{
                     opacity: 0,
-                    scale: 0.95,
+                    y: 35,
                   }}
                   animate={{
                     opacity: 1,
-                    scale: 1,
+                    y: 0,
                   }}
                   exit={{
                     opacity: 0,
-                    scale: 0.9,
+                    scale: 0.96,
                   }}
                   transition={{
-                    duration: 0.25,
+                    duration: 0.45,
+                    delay:
+                      index * 0.035,
+                    ease: [
+                      0.22,
+                      1,
+                      0.36,
+                      1,
+                    ],
                   }}
                 >
                   <ServiceCard
-                    service={
-                      service
-                    }
+                    service={service}
                   />
                 </motion.div>
               )
             )}
-
           </AnimatePresence>
         </motion.div>
       )}
-
     </div>
   );
 }

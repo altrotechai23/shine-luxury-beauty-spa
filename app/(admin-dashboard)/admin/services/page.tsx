@@ -118,7 +118,7 @@ export default async function ServicesPage() {
 
                   <div className="flex items-center gap-2">
 
-                    <DollarSign size={16} />
+                    R
 
                     <span>
                       {service.price.toFixed(2)}
