@@ -1,49 +1,35 @@
 import Hero from "@/components/hero/Hero";
 
-
 import ShineExperience from "@/components/sections/ShineExperience";
 import Gallery from "@/components/sections/Gallery";
 import Testimonials from "@/components/sections/Testimonials";
 import SpecialOffer from "@/components/sections/SpecialOffer";
 import BookingCTA from "@/components/sections/BookingCTA";
+import FeaturedServices from "@/components/sections/featured-services/FeaturedServices";
 
 import { getSettings } from "@/lib/data/settings";
 import { getFeaturedServices } from "@/lib/data/services";
 import { getGalleryImages } from "@/lib/data/gallery";
-import { getTestimonials } from "@/lib/data/testimonials";
-import FeaturedServices from "@/components/sections/featured-services/FeaturedServices";
 
 
-export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [
-    settings,
-    featuredServices,
-    gallery,
-    testimonials,
-  ] = await Promise.all([
+  const [settings, featuredServices, gallery] = await Promise.all([
     getSettings(),
     getFeaturedServices(),
     getGalleryImages(),
-    getTestimonials(),
   ]);
 
   return (
-    <main
-      className="
-        relative
-        overflow-x-hidden
-        bg-[#081B1F]
-        text-white
-      "
-    >
+    <main className="relative isolate">
       {/* ==========================================================
           Global Ambient Background
       ========================================================== */}
 
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
         <div
           className="
             absolute
@@ -57,7 +43,7 @@ export default async function HomePage() {
 
             bg-[#62AAB5]/10
 
-            blur-[220px]
+            blur-[180px]
           "
         />
 
@@ -74,7 +60,7 @@ export default async function HomePage() {
 
             bg-[#D7C0A0]/8
 
-            blur-[220px]
+            blur-[180px]
           "
         />
 
@@ -93,10 +79,9 @@ export default async function HomePage() {
 
             bg-[#62AAB5]/8
 
-            blur-[260px]
+            blur-[200px]
           "
         />
-
       </div>
 
       {/* ==========================================================
@@ -110,9 +95,7 @@ export default async function HomePage() {
       ========================================================== */}
 
       <section className="relative z-10">
-        <FeaturedServices
-          services={featuredServices}
-        />
+        <FeaturedServices services={featuredServices} />
       </section>
 
       {/* ==========================================================
@@ -128,9 +111,7 @@ export default async function HomePage() {
       ========================================================== */}
 
       <section className="relative z-10">
-        <Gallery
-          images={gallery}
-        />
+        <Gallery images={gallery} />
       </section>
 
       {/* ==========================================================
@@ -138,8 +119,7 @@ export default async function HomePage() {
       ========================================================== */}
 
       <section className="relative z-10">
-        <Testimonials
-        />
+        <Testimonials />
       </section>
 
       {/* ==========================================================

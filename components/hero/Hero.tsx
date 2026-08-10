@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 import {
   motion,
   useMotionValue,
-  useSpring,
   useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
 
@@ -31,56 +31,77 @@ interface HeroProps {
   };
 }
 
-export default function Hero({
-  settings,
-}: HeroProps) {
+export default function Hero({ settings }: HeroProps) {
   const heroRef = useRef<HTMLElement>(null);
 
   /*
-  -----------------------------------------------------
-  Mouse Physics
-  -----------------------------------------------------
-  */
+   * -------------------------------------------------------
+   * Mouse Parallax
+   * -------------------------------------------------------
+   *
+   * Uses requestAnimationFrame so mousemove does not
+   * continuously trigger React renders.
+   *
+   * Disabled automatically on touch/coarse-pointer devices.
+   */
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   const x = useSpring(mouseX, {
-    stiffness: 80,
-    damping: 22,
-    mass: 0.6,
+    stiffness: 70,
+    damping: 25,
+    mass: 0.5,
   });
 
   const y = useSpring(mouseY, {
-    stiffness: 80,
-    damping: 22,
-    mass: 0.6,
+    stiffness: 70,
+    damping: 25,
+    mass: 0.5,
   });
 
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2;
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      return;
+    }
 
-      mouseX.set((event.clientX - cx) * 0.012);
-      mouseY.set((event.clientY - cy) * 0.012);
+    let frame = 0;
+    let nextX = 0;
+    let nextY = 0;
+
+    const handleMouseMove = (event: MouseEvent) => {
+      nextX = (event.clientX - window.innerWidth * 0.5) * 0.008;
+      nextY = (event.clientY - window.innerHeight * 0.5) * 0.008;
+
+      if (frame !== 0) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(() => {
+        mouseX.set(nextX);
+        mouseY.set(nextY);
+        frame = 0;
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, {
+      passive: true,
+    });
 
     return () => {
-      window.removeEventListener(
-        "mousemove",
-        handleMouseMove
-      );
+      window.removeEventListener("mousemove", handleMouseMove);
+
+      if (frame !== 0) {
+        window.cancelAnimationFrame(frame);
+      }
     };
   }, [mouseX, mouseY]);
 
   /*
-  -----------------------------------------------------
-  Scroll Physics
-  -----------------------------------------------------
-  */
+   * -------------------------------------------------------
+   * Scroll Parallax
+   * -------------------------------------------------------
+   */
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -90,24 +111,24 @@ export default function Hero({
   const backgroundScale = useTransform(
     scrollYProgress,
     [0, 1],
-    [1, 1.15]
+    [1, 1.08]
   );
 
   const backgroundY = useTransform(
     scrollYProgress,
     [0, 1],
-    [0, 160]
+    [0, 100]
   );
 
   const contentY = useTransform(
     scrollYProgress,
-    [0, 1],
-    [0, -90]
+    [0, 0.85],
+    [0, -60]
   );
 
-  const opacity = useTransform(
+  const contentOpacity = useTransform(
     scrollYProgress,
-    [0, 0.9],
+    [0, 0.85],
     [1, 0]
   );
 
@@ -116,12 +137,16 @@ export default function Hero({
       ref={heroRef}
       className="
         relative
+        isolate
         min-h-screen
         overflow-hidden
         bg-[#081B1F]
       "
     >
-      {/* Background */}
+      {/* -------------------------------------------------------
+          Cinematic Background
+      -------------------------------------------------------- */}
+
       <HeroBackground
         businessName={settings.businessName}
         x={x}
@@ -130,20 +155,26 @@ export default function Hero({
         backgroundY={backgroundY}
       />
 
-      {/* Ambient Lights */}
-      <HeroLights
-        x={x}
-        y={y}
-      />
+      {/* -------------------------------------------------------
+          Ambient Lights
+      -------------------------------------------------------- */}
 
-      {/* Floating Particles */}
-      <HeroParticles />
+      {/* <HeroLights x={x} y={y} /> */}
 
-      {/* Hero Content */}
+      {/* -------------------------------------------------------
+          Floating Particles
+      -------------------------------------------------------- */}
+
+      {/* <HeroParticles /> */}
+
+      {/* -------------------------------------------------------
+          Main Content
+      -------------------------------------------------------- */}
+
       <motion.div
         style={{
           y: contentY,
-          opacity,
+          opacity: contentOpacity,
         }}
         className="
           relative
@@ -160,26 +191,30 @@ export default function Hero({
             w-full
             max-w-7xl
             items-center
-            gap-16
+            gap-12
             px-6
+            pb-24
             pt-28
+            md:gap-16
+            md:pb-28
             md:pt-36
-
             lg:grid-cols-2
           "
         >
-          {/* Left */}
-          <HeroContent
-            settings={settings}
-          />
+          {/* Left Content */}
+          <HeroContent settings={settings} />
 
-          {/* Right */}
+          {/* Right Floating Card */}
           <HeroFloatingCard />
         </div>
       </motion.div>
 
-      {/* Scroll Indicator */}
+      {/* -------------------------------------------------------
+          Scroll Indicator
+      -------------------------------------------------------- */}
+
       <HeroScroll />
     </section>
   );
 }
+
