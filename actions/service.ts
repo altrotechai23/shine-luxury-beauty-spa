@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { serviceSchema } from "@/lib/validators/service";
-
+import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getStoragePathFromUrl } from "@/lib/storage-path";
 import { revalidatePath } from "next/cache";
 
 export async function createService(formData: FormData) {
@@ -90,11 +91,36 @@ export async function updateService(formData: FormData) {
 export async function deleteService(formData: FormData) {
   const id = formData.get("id") as string;
 
+  const service = await prisma.service.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      image: true,
+    },
+  });
+
   await prisma.service.delete({
     where: {
       id,
     },
   });
+
+  if (service?.image) {
+    const fullPath = getStoragePathFromUrl(
+      service.image
+    );
+
+    if (fullPath) {
+      const pathWithoutBucket =
+        fullPath.replace(/^Shine\//, "");
+
+      await supabaseAdmin.storage
+        .from("Shine")
+        .remove([pathWithoutBucket]);
+    }
+  }
+
   revalidatePath("/");
   revalidatePath("/admin/services");
 }

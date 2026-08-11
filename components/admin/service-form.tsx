@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { ImagePlus, X } from "lucide-react";
+import { uploadServiceImage } from "@/lib/upload-service-image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,6 +16,7 @@ import {
 import InputField from "@/components/ui/input-field";
 import TextareaField from "@/components/ui/textarea-field";
 import Button from "@/components/ui/button";
+
 
 interface Category {
   id: string;
@@ -54,6 +59,11 @@ export default function ServiceForm({
 }: Props) {
   const isEditing = !!service;
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    service?.image ?? null
+  );
+
   const {
     register,
     watch,
@@ -93,7 +103,38 @@ export default function ServiceForm({
     setValue("slug", slug);
   }, [title, setValue, isEditing]);
 
+
+  function handleImageChange(
+  event: React.ChangeEvent<HTMLInputElement>
+) {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return;
+  }
+
+  setImageFile(file);
+
+  const previewUrl = URL.createObjectURL(file);
+
+  setImagePreview(previewUrl);
+}
+
   async function onSubmit(values: ServiceInput) {
+  try {
+    let imageUrl = values.image ?? "";
+
+    // Upload only when a new image was selected
+    if (imageFile) {
+      imageUrl = await uploadServiceImage(imageFile);
+    }
+
     const formData = new FormData();
 
     if (service) {
@@ -107,8 +148,8 @@ export default function ServiceForm({
     formData.append("price", String(values.price));
     formData.append("categoryId", values.categoryId);
 
-    if (values.image) {
-      formData.append("image", values.image);
+    if (imageUrl) {
+      formData.append("image", imageUrl);
     }
 
     formData.append("featured", String(values.featured));
@@ -116,10 +157,16 @@ export default function ServiceForm({
 
     const result = await action(formData);
 
-    if (result.success) {
-      onSuccess?.();
+    if (!result.success) {
+      console.error("Service update failed:", result.errors);
+      return;
     }
+
+    onSuccess?.();
+  } catch (error) {
+    console.error("Service submission failed:", error);
   }
+}
 
   return (
     <form
@@ -200,12 +247,60 @@ export default function ServiceForm({
 
       </div>
 
-      <InputField
-        label="Image URL"
-        placeholder="https://..."
-        {...register("image")}
-        error={errors.image?.message}
-      />
+      <div className="space-y-3">
+  <label className="block text-sm font-medium">
+    Service Image
+  </label>
+
+  <div className="rounded-2xl border border-dashed border-neutral-300 p-4">
+    {imagePreview ? (
+      <div className="relative overflow-hidden rounded-xl">
+        <img
+          src={imagePreview}
+          alt="Service preview"
+          className="h-56 w-full object-cover"
+        />
+
+        <button
+          type="button"
+          onClick={() => {
+            setImageFile(null);
+            setImagePreview(null);
+            setValue("image", "");
+          }}
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-black"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    ) : (
+      <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-neutral-200 px-6 py-10 text-center transition hover:bg-neutral-50">
+        <ImagePlus className="mb-3 h-8 w-8 text-neutral-400" />
+
+        <span className="text-sm font-medium">
+          Upload service image
+        </span>
+
+        <span className="mt-1 text-xs text-neutral-500">
+          JPG, PNG, WEBP or AVIF · Maximum 5MB
+        </span>
+
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          onChange={handleImageChange}
+          className="hidden"
+        />
+      </label>
+    )}
+  </div>
+
+  {errors.image && (
+    <p className="text-sm text-red-500">
+      {errors.image.message}
+    </p>
+  )}
+</div>
 
       <div className="space-y-4 rounded-2xl border p-5">
 
