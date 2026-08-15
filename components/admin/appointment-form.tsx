@@ -7,7 +7,6 @@ import {
   appointmentSchema,
   AppointmentInput,
 } from "@/lib/validators/appointment";
-import type { Prisma } from "@prisma/client";
 import InputField from "@/components/ui/input-field";
 import TextareaField from "@/components/ui/textarea-field";
 import Button from "@/components/ui/button";

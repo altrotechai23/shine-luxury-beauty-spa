@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import type { Prisma } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 
+
+
 import BookingHeader from "./BookingHeader";
 import BookingNavigation from "./BookingNavigation";
 
@@ -11,6 +13,7 @@ import StepService from "./StepService";
 import StepDateTime from "./StepDateTime";
 import StepCustomer from "./StepCustomer";
 import BookingSuccess from "./BookingSuccess";
+import { createBooking } from "@/actions/booking";
 
 type Service = Prisma.ServiceGetPayload<{
   include: {
@@ -37,6 +40,9 @@ export default function BookingWizard({
 }: Props) {
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [booking, setBooking] = useState<BookingData>({
     serviceId: "",
@@ -78,6 +84,12 @@ export default function BookingWizard({
       ...previous,
       ...values,
     }));
+
+    // Clear any previous error when the customer
+    // changes their booking information.
+    if (error) {
+      setError(null);
+    }
   }
 
   /*
@@ -96,6 +108,126 @@ export default function BookingWizard({
     setStep((current) =>
       Math.max(current - 1, 0)
     );
+  }
+
+  /*
+  =========================================================
+  CREATE APPOINTMENT
+  =========================================================
+  */
+
+  async function submitBooking() {
+    // Prevent duplicate bookings if the customer
+    // clicks the submit button multiple times.
+    if (submitting) {
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      /*
+      -------------------------------------------------------
+      Basic frontend validation
+      -------------------------------------------------------
+      */
+
+      if (!booking.serviceId) {
+        setError(
+          "Please select a service before booking."
+        );
+        return;
+      }
+
+      if (!booking.date) {
+        setError(
+          "Please select a date before booking."
+        );
+        return;
+      }
+
+      if (!booking.time) {
+        setError(
+          "Please select a time before booking."
+        );
+        return;
+      }
+
+      if (!booking.fullName.trim()) {
+        setError(
+          "Please enter your full name."
+        );
+        return;
+      }
+
+      if (!booking.phone.trim()) {
+        setError(
+          "Please enter your phone number."
+        );
+        return;
+      }
+
+      if (!booking.email.trim()) {
+        setError(
+          "Please enter your email address."
+        );
+        return;
+      }
+
+      /*
+      -------------------------------------------------------
+      SEND BOOKING TO SERVER
+      -------------------------------------------------------
+      */
+
+      const result = await createBooking({
+        fullName: booking.fullName,
+        phone: booking.phone,
+        email: booking.email,
+        serviceId: booking.serviceId,
+        date: booking.date,
+        time: booking.time,
+        notes: booking.notes || undefined,
+      });
+
+      /*
+      -------------------------------------------------------
+      DATABASE ERROR
+      -------------------------------------------------------
+      */
+
+      if (!result.success) {
+        setError(
+          result.message ||
+            "We could not create your appointment. Please try again."
+        );
+
+        return;
+      }
+
+      /*
+      -------------------------------------------------------
+      SUCCESS
+      -------------------------------------------------------
+      
+      Only show the success screen AFTER Prisma has
+      successfully created the appointment.
+      */
+
+      setSuccess(true);
+    } catch (error) {
+      console.error(
+        "BOOKING SUBMISSION ERROR:",
+        error
+      );
+
+      setError(
+        "Something went wrong while creating your appointment. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   /*
@@ -133,6 +265,7 @@ export default function BookingWizard({
       ================================================= */}
 
       <div className="pointer-events-none fixed inset-0 z-0">
+
         {/* Cyan glow */}
 
         <div
@@ -201,6 +334,7 @@ export default function BookingWizard({
             opacity-70
           "
         />
+
       </div>
 
       {/* =================================================
@@ -208,6 +342,7 @@ export default function BookingWizard({
       ================================================= */}
 
       <div className="relative z-10 min-h-[100svh]">
+
         {/* =================================================
             HEADER
         ================================================= */}
@@ -229,6 +364,7 @@ export default function BookingWizard({
 
         <div className="mx-auto w-full max-w-7xl px-5 pt-4 sm:px-8 lg:px-12">
           <div className="flex items-center gap-2">
+
             {[0, 1, 2].map((item) => {
               const active = item === step;
               const completed = item < step;
@@ -249,7 +385,12 @@ export default function BookingWizard({
                   }}
                   transition={{
                     duration: 0.35,
-                    ease: [0.22, 1, 0.36, 1],
+                    ease: [
+                      0.22,
+                      1,
+                      0.36,
+                      1,
+                    ],
                   }}
                   className={`
                     h-[3px]
@@ -273,10 +414,39 @@ export default function BookingWizard({
                 text-white/35
               "
             >
-              {String(step + 1).padStart(2, "0")} / 03
+              {String(step + 1).padStart(
+                2,
+                "0"
+              )}{" "}
+              / 03
             </span>
+
           </div>
         </div>
+
+        {/* =================================================
+            ERROR MESSAGE
+        ================================================= */}
+
+        {error && (
+          <div className="mx-auto w-full max-w-7xl px-5 pt-5 sm:px-8 lg:px-12">
+            <div
+              role="alert"
+              className="
+                rounded-2xl
+                border
+                border-red-400/20
+                bg-red-500/10
+                px-5
+                py-4
+                text-sm
+                text-red-200
+              "
+            >
+              {error}
+            </div>
+          </div>
+        )}
 
         {/* =================================================
             FULL SCREEN STEP
@@ -300,10 +470,12 @@ export default function BookingWizard({
             lg:px-12
           "
         >
+
           <AnimatePresence
             mode="wait"
             initial={false}
           >
+
             {/* =================================================
                 STEP 1 — SERVICE
             ================================================= */}
@@ -325,7 +497,12 @@ export default function BookingWizard({
                 }}
                 transition={{
                   duration: 0.4,
-                  ease: [0.22, 1, 0.36, 1],
+                  ease: [
+                    0.22,
+                    1,
+                    0.36,
+                    1,
+                  ],
                 }}
                 className="
                   flex
@@ -363,7 +540,12 @@ export default function BookingWizard({
                 }}
                 transition={{
                   duration: 0.4,
-                  ease: [0.22, 1, 0.36, 1],
+                  ease: [
+                    0.22,
+                    1,
+                    0.36,
+                    1,
+                  ],
                 }}
                 className="
                   flex
@@ -400,7 +582,12 @@ export default function BookingWizard({
                 }}
                 transition={{
                   duration: 0.4,
-                  ease: [0.22, 1, 0.36, 1],
+                  ease: [
+                    0.22,
+                    1,
+                    0.36,
+                    1,
+                  ],
                 }}
                 className="
                   flex
@@ -413,12 +600,11 @@ export default function BookingWizard({
                   booking={booking}
                   service={selectedService}
                   updateBooking={updateBooking}
-                  onSuccess={() =>
-                    setSuccess(true)
-                  }
+                  onSuccess={submitBooking}
                 />
               </motion.section>
             )}
+
           </AnimatePresence>
         </main>
 
@@ -432,6 +618,7 @@ export default function BookingWizard({
           onPrevious={previous}
           booking={booking}
         />
+
       </div>
     </div>
   );
