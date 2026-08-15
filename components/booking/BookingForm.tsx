@@ -107,7 +107,7 @@ export default function BookingForm() {
         </label>
 
         <select
-          {...register("service")}
+          {...register("serviceId")}
           className="w-full rounded-xl border p-4"
         >
           <option value="">Choose a treatment</option>
@@ -121,9 +121,11 @@ export default function BookingForm() {
           <option>Lashes & Brows</option>
         </select>
 
-        <p className="mt-1 text-sm text-red-500">
-          {errors.service?.message}
-        </p>
+        {errors.serviceId && (
+  <p className="text-sm text-red-500">
+    {errors.serviceId.message}
+  </p>
+)}
       </div>
 
       {/* Therapist */}
