@@ -18,13 +18,23 @@ export default function BookingForm() {
   const [isPending, startTransition] = useTransition();
 
   const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<BookingSchema>({
-    resolver: zodResolver(bookingSchema),
-  });
+  register,
+  handleSubmit,
+  reset,
+  formState: { errors },
+} = useForm<BookingSchema>({
+  resolver: zodResolver(bookingSchema),
+  defaultValues: {
+    fullName: "",
+    phone: "",
+    email: "",
+    serviceId: "",
+    therapist: "",
+    date: "",
+    time: "",
+    notes: "",
+  },
+});
 
   function onSubmit(data: BookingSchema) {
     setMessage("");
@@ -84,21 +94,29 @@ export default function BookingForm() {
 
       {/* Email */}
       <div>
-        <label className="mb-2 block font-medium">
-          Email
-        </label>
+  <label
+    htmlFor="email"
+    className="mb-2 block text-sm font-medium"
+  >
+    Email address
+  </label>
 
-        <input
-          {...register("email")}
-          type="email"
-          className="w-full rounded-xl border p-4"
-          placeholder="john@email.com"
-        />
+  <input
+    id="email"
+    type="email"
+    inputMode="email"
+    autoComplete="email"
+    placeholder="you@example.com"
+    {...register("email")}
+    className="w-full rounded-xl border p-4"
+  />
 
-        <p className="mt-1 text-sm text-red-500">
-          {errors.email?.message}
-        </p>
-      </div>
+  {errors.email && (
+    <p className="mt-2 text-sm text-red-500">
+      {errors.email.message}
+    </p>
+  )}
+</div>
 
       {/* Service */}
       <div>
