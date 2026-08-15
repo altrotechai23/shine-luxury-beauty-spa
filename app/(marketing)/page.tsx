@@ -30,22 +30,7 @@ export default async function HomePage() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <div
-          className="
-            absolute
-            left-[-20rem]
-            top-[40rem]
-
-            h-[45rem]
-            w-[45rem]
-
-            rounded-full
-
-            bg-[#62AAB5]/10
-
-            blur-[180px]
-          "
-        />
+        <div    className="  absolute   left-[-20rem]  top-[40rem]  h-[45rem]  w-[45rem]  rounded-full  bg-[#62AAB5]/10 blur-[180px] " />
 
         <div
           className="

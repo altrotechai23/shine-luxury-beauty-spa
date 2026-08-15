@@ -21,6 +21,8 @@ export async function getFeaturedServices() {
       },
     ],
   });
+  console.log("Calling all the service with feature true")
+  console.log(services)
 
   return services;
 }
