@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-
 export interface BookingEmailData {
   appointmentId: string;
   fullName: string;
@@ -15,7 +12,7 @@ export interface BookingEmailData {
 
 /*
 =========================================================
-BRAND
+SHINE BRAND
 =========================================================
 */
 
@@ -33,21 +30,25 @@ const BRAND = {
 
 /*
 =========================================================
-LOGO
+PRODUCTION SITE
+=========================================================
+
+IMPORTANT:
+
+Do NOT use fs.readFileSync() for the logo.
+
+The logo is publicly available at:
+
+https://www.shinebeautyspa.co.za/shine.png
 =========================================================
 */
 
-function getLogoBase64() {
-  const logoPath = path.join(
-    process.cwd(),
-    "public",
-    "shine.png"
-  );
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://www.shinebeautyspa.co.za";
 
-  return fs
-    .readFileSync(logoPath)
-    .toString("base64");
-}
+const LOGO_URL =
+  `${SITE_URL}/shine.png`;
 
 /*
 =========================================================
@@ -70,7 +71,7 @@ function formatDate(date: Date) {
 
 /*
 =========================================================
-ESCAPE HTML
+HTML ESCAPE
 =========================================================
 */
 
@@ -85,15 +86,13 @@ function escapeHtml(value: string) {
 
 /*
 =========================================================
-CLIENT CONFIRMATION EMAIL
+CLIENT EMAIL
 =========================================================
 */
 
 export function createClientBookingEmail(
   booking: BookingEmailData
 ) {
-  const logo = getLogoBase64();
-
   const customerName =
     escapeHtml(booking.fullName);
 
@@ -101,7 +100,9 @@ export function createClientBookingEmail(
     escapeHtml(booking.serviceName);
 
   const formattedDate =
-    escapeHtml(formatDate(booking.date));
+    escapeHtml(
+      formatDate(booking.date)
+    );
 
   const time =
     escapeHtml(booking.time);
@@ -206,7 +207,7 @@ export function createClientBookingEmail(
 >
 
   <img
-    src="cid:shine-logo"
+    src="${LOGO_URL}"
     width="150"
     alt="SHINE Luxury Beauty Spa"
     style="
@@ -215,6 +216,7 @@ export function createClientBookingEmail(
       max-width:100%;
       height:auto;
       border:0;
+      margin:0 auto;
     "
   />
 
@@ -472,7 +474,7 @@ export function createClientBookingEmail(
 
   </table>
 
-  <!-- THERAPIST -->
+  <!-- SPECIALIST -->
 
   <table
     width="100%"
@@ -582,10 +584,6 @@ export function createClientBookingEmail(
 ${
   notes
     ? `
-<!-- =====================================================
-     NOTES
-====================================================== -->
-
 <tr>
 
 <td
@@ -606,32 +604,36 @@ ${
 
 <tr>
 
-<td style="padding-left:18px;">
+<td
+  style="
+    padding-left:18px;
+  "
+>
 
-  <p
-    style="
-      margin:0;
-      color:#8A9496;
-      font-size:10px;
-      line-height:16px;
-      letter-spacing:2px;
-      text-transform:uppercase;
-      font-weight:700;
-    "
-  >
-    Your Notes
-  </p>
+<p
+  style="
+    margin:0;
+    color:#8A9496;
+    font-size:10px;
+    line-height:16px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-weight:700;
+  "
+>
+  Your Notes
+</p>
 
-  <p
-    style="
-      margin:6px 0 0;
-      color:#4E5A5D;
-      font-size:13px;
-      line-height:22px;
-    "
-  >
-    ${notes}
-  </p>
+<p
+  style="
+    margin:6px 0 0;
+    color:#4E5A5D;
+    font-size:13px;
+    line-height:22px;
+  "
+>
+  ${notes}
+</p>
 
 </td>
 
@@ -647,7 +649,7 @@ ${
 }
 
 <!-- =====================================================
-     EXPERIENCE MESSAGE
+     CLOSING
 ====================================================== -->
 
 <tr>
@@ -718,46 +720,46 @@ ${
   align="center"
   style="
     background:#061519;
-    padding:30px 30px;
+    padding:30px;
   "
 >
 
-  <p
-    style="
-      margin:0;
-      color:#62AAB5;
-      font-size:10px;
-      line-height:16px;
-      letter-spacing:2.5px;
-      text-transform:uppercase;
-      font-weight:600;
-    "
-  >
-    SHINE LUXURY BEAUTY SPA
-  </p>
+<p
+  style="
+    margin:0;
+    color:#62AAB5;
+    font-size:10px;
+    line-height:16px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    font-weight:600;
+  "
+>
+  SHINE LUXURY BEAUTY SPA
+</p>
 
-  <p
-    style="
-      margin:9px 0 0;
-      color:#879598;
-      font-size:11px;
-      line-height:18px;
-    "
-  >
-    Beauty • Wellness • Exceptional Care
-  </p>
+<p
+  style="
+    margin:9px 0 0;
+    color:#879598;
+    font-size:11px;
+    line-height:18px;
+  "
+>
+  Beauty • Wellness • Exceptional Care
+</p>
 
-  <p
-    style="
-      margin:18px 0 0;
-      color:#4F6468;
-      font-size:10px;
-      line-height:16px;
-    "
-  >
-    This is an automated appointment confirmation.
-    Please keep this email for your records.
-  </p>
+<p
+  style="
+    margin:18px 0 0;
+    color:#4F6468;
+    font-size:10px;
+    line-height:16px;
+  "
+>
+  This is an automated appointment confirmation.
+  Please keep this email for your records.
+</p>
 
 </td>
 
@@ -808,28 +810,18 @@ please contact SHINE Luxury Beauty Spa directly.
 SHINE LUXURY BEAUTY SPA
 Beauty • Wellness • Exceptional Care
 `,
-    
-    attachments: [
-      {
-        content: logo,
-        filename: "shine.png",
-        contentId: "shine-logo",
-      },
-    ],
   };
 }
 
 /*
 =========================================================
-OWNER BOOKING EMAIL
+OWNER EMAIL
 =========================================================
 */
 
 export function createOwnerBookingEmail(
   booking: BookingEmailData
 ) {
-  const logo = getLogoBase64();
-
   const customerName =
     escapeHtml(booking.fullName);
 
@@ -843,7 +835,9 @@ export function createOwnerBookingEmail(
     escapeHtml(booking.serviceName);
 
   const formattedDate =
-    escapeHtml(formatDate(booking.date));
+    escapeHtml(
+      formatDate(booking.date)
+    );
 
   const time =
     escapeHtml(booking.time);
@@ -879,7 +873,9 @@ export function createOwnerBookingEmail(
     content="width=device-width, initial-scale=1.0"
   />
 
-  <title>New SHINE Appointment</title>
+  <title>
+    New SHINE Appointment
+  </title>
 
 </head>
 
@@ -950,13 +946,14 @@ export function createOwnerBookingEmail(
 <td>
 
 <img
-  src="cid:shine-logo"
+  src="${LOGO_URL}"
   width="120"
   alt="SHINE Luxury Beauty Spa"
   style="
     display:block;
     width:120px;
     height:auto;
+    border:0;
   "
 />
 
@@ -1047,7 +1044,7 @@ export function createOwnerBookingEmail(
 
 </tr>
 
-<!-- CUSTOMER -->
+<!-- GUEST -->
 
 <tr>
 
@@ -1345,7 +1342,11 @@ export function createOwnerBookingEmail(
 
 <tr>
 
-<td style="padding-left:18px;">
+<td
+  style="
+    padding-left:18px;
+  "
+>
 
 <p
   style="
@@ -1440,29 +1441,25 @@ NEW SHINE APPOINTMENT
 A new guest has booked with SHINE Luxury Beauty Spa.
 
 GUEST
+
 Name: ${booking.fullName}
 Email: ${booking.email}
 Phone: ${booking.phone}
 
 APPOINTMENT
+
 Service: ${booking.serviceName}
 Date: ${formatDate(booking.date)}
 Time: ${booking.time}
 Specialist: ${booking.therapist || "Not specified"}
 
 BOOKING REFERENCE
+
 ${booking.appointmentId}
 
 CUSTOMER NOTES
+
 ${booking.notes || "No additional notes"}
 `,
-
-    attachments: [
-      {
-        content: logo,
-        filename: "shine.png",
-        contentId: "shine-logo",
-      },
-    ],
   };
 }

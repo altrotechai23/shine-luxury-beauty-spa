@@ -30,9 +30,9 @@ export async function createBooking(
   data: unknown
 ) {
   /*
-  =========================================================
-  VALIDATE
-  =========================================================
+  =======================================================
+  VALIDATION
+  =======================================================
   */
 
   const result =
@@ -53,14 +53,16 @@ export async function createBooking(
 
   const booking = result.data;
 
-  try {
-    /*
-    =======================================================
-    VERIFY SERVICE
-    =======================================================
-    */
+  /*
+  =======================================================
+  FIND SERVICE
+  =======================================================
+  */
 
-    const service =
+  let service;
+
+  try {
+    service =
       await prisma.service.findUnique({
         where: {
           id: booking.serviceId,
@@ -74,21 +76,47 @@ export async function createBooking(
           "The selected service could not be found.",
       };
     }
+  } catch (error) {
+    console.error(
+      "SERVICE LOOKUP ERROR:",
+      error
+    );
 
-    /*
-    =======================================================
-    CREATE APPOINTMENT
-    =======================================================
-    */
+    return {
+      success: false,
+      message:
+        "We could not verify the selected service.",
+    };
+  }
 
-    const appointment =
+  /*
+  =======================================================
+  CREATE APPOINTMENT
+  =======================================================
+
+  IMPORTANT:
+
+  The appointment is saved BEFORE emails are sent.
+
+  Therefore a Resend failure cannot destroy
+  the appointment.
+  =======================================================
+  */
+
+  let appointment;
+
+  try {
+    appointment =
       await prisma.appointment.create({
         data: {
-          fullName: booking.fullName,
+          fullName:
+            booking.fullName,
 
-          phone: booking.phone,
+          phone:
+            booking.phone,
 
-          email: booking.email,
+          email:
+            booking.email,
 
           service: {
             connect: {
@@ -99,129 +127,137 @@ export async function createBooking(
           therapist:
             booking.therapist || null,
 
-          date: new Date(
-            booking.date
-          ),
+          date:
+            new Date(booking.date),
 
-          time: booking.time,
+          time:
+            booking.time,
 
           notes:
             booking.notes || null,
         },
       });
 
-    /*
-    =======================================================
-    LOG SUCCESS
-    =======================================================
-    */
-
     console.log(
-      "ALTRONO ++++++++++++++++ APPOINTMENT CREATED:",
+      "SHINE APPOINTMENT CREATED:",
       appointment.id
     );
 
-    /*
-    =======================================================
-    PREPARE EMAIL DATA
-    =======================================================
-    */
+  } catch (error) {
+    console.error(
+      "CREATE APPOINTMENT ERROR:",
+      error
+    );
 
-    const emailData = {
-      appointmentId: appointment.id,
-
-      fullName:
-        appointment.fullName,
-
-      phone:
-        appointment.phone,
-
-      email:
-        appointment.email,
-
-      serviceName:
-        service.title,
-
-      date:
-        appointment.date,
-
-      time:
-        appointment.time,
-
-      therapist:
-        appointment.therapist,
-
-      notes:
-        appointment.notes,
+    return {
+      success: false,
+      message:
+        "We could not create your appointment. Please try again.",
     };
+  }
+
+  /*
+  =======================================================
+  EMAIL DATA
+  =======================================================
+  */
+
+  const emailData = {
+    appointmentId:
+      appointment.id,
+
+    fullName:
+      appointment.fullName,
+
+    phone:
+      appointment.phone,
+
+    email:
+      appointment.email,
+
+    serviceName:
+      service.title,
+
+    date:
+      appointment.date,
+
+    time:
+      appointment.time,
+
+    therapist:
+      appointment.therapist,
+
+    notes:
+      appointment.notes,
+  };
+
+  /*
+  =======================================================
+  RESEND ENVIRONMENT
+  =======================================================
+  */
+
+  const fromEmail =
+    process.env.RESEND_FROM_EMAIL;
+
+  const ownerEmail =
+    process.env.SHINE_OWNER_EMAIL;
+
+  /*
+  =======================================================
+  CHECK RESEND CONFIGURATION
+  =======================================================
+  */
+
+  if (
+    !process.env.RESEND_API_KEY ||
+    !fromEmail ||
+    !ownerEmail
+  ) {
+    console.error(
+      "SHINE RESEND CONFIGURATION IS MISSING."
+    );
 
     /*
-    =======================================================
-    GENERATE CLIENT EMAIL
-    =======================================================
+    Appointment already exists,
+    therefore still return success.
     */
 
+    return {
+      success: true,
+
+      appointmentId:
+        appointment.id,
+
+      emailSent: false,
+
+      clientEmailSent: false,
+
+      ownerEmailSent: false,
+    };
+  }
+
+  /*
+  =======================================================
+  BUILD EMAILS
+  =======================================================
+  */
+
+  try {
     const clientEmail =
       createClientBookingEmail(
         emailData
       );
 
-    /*
-    =======================================================
-    GENERATE OWNER EMAIL
-    =======================================================
-    */
-
-    const ownerEmail =
+    const ownerEmailTemplate =
       createOwnerBookingEmail(
         emailData
       );
 
     /*
-    =======================================================
-    EMAIL ADDRESSES
-    =======================================================
-    */
-
-    const ownerEmailAddress =
-      process.env.SHINE_OWNER_EMAIL;
-
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL;
-
-    /*
-    =======================================================
-    SAFETY CHECK
-    =======================================================
-    */
-
-    if (
-      !process.env.RESEND_API_KEY ||
-      !fromEmail ||
-      !ownerEmailAddress
-    ) {
-      console.error(
-        "RESEND ENVIRONMENT VARIABLES ARE MISSING."
-      );
-
-      /*
-      IMPORTANT:
-      The appointment has already been created.
-      We do NOT fail the booking just because email
-      configuration is missing.
-      */
-
-      return {
-        success: true,
-        appointmentId: appointment.id,
-        emailSent: false,
-      };
-    }
-
-    /*
-    =======================================================
-    SEND CLIENT + OWNER EMAILS
-    =======================================================
+    =====================================================
+    SEND CLIENT + OWNER IN PARALLEL
+    =====================================================
     */
 
     const [
@@ -229,13 +265,14 @@ export async function createBooking(
       ownerResult,
     ] = await Promise.allSettled([
       /*
-      -------------------------------------------------------
+      -----------------------------------------------------
       CLIENT
-      -------------------------------------------------------
+      -----------------------------------------------------
       */
 
       resend.emails.send({
-        from: fromEmail,
+        from:
+          fromEmail,
 
         to: [
           appointment.email,
@@ -249,105 +286,109 @@ export async function createBooking(
 
         text:
           clientEmail.text,
-
-        attachments:
-          clientEmail.attachments,
       }),
 
       /*
-      -------------------------------------------------------
+      -----------------------------------------------------
       OWNER
-      -------------------------------------------------------
+      -----------------------------------------------------
       */
 
       resend.emails.send({
-        from: fromEmail,
+        from:
+          fromEmail,
 
         to: [
-          ownerEmailAddress,
+          ownerEmail,
         ],
 
         subject:
           `New SHINE Booking — ${appointment.fullName}`,
 
         html:
-          ownerEmail.html,
+          ownerEmailTemplate.html,
 
         text:
-          ownerEmail.text,
-
-        attachments:
-          ownerEmail.attachments,
+          ownerEmailTemplate.text,
       }),
     ]);
 
     /*
-    =======================================================
-    CHECK CLIENT EMAIL
-    =======================================================
+    =====================================================
+    CLIENT RESULT
+    =====================================================
     */
 
-    let clientEmailSent = false;
-    let ownerEmailSent = false;
+    let clientEmailSent =
+      false;
 
     if (
       clientResult.status ===
       "fulfilled"
     ) {
-      if (clientResult.value.error) {
+      if (
+        clientResult.value.error
+      ) {
         console.error(
-          "CLIENT EMAIL ERROR:",
+          "SHINE CLIENT EMAIL ERROR:",
           clientResult.value.error
         );
       } else {
-        clientEmailSent = true;
+        clientEmailSent =
+          true;
 
         console.log(
-          "CLIENT CONFIRMATION EMAIL SENT:",
+          "SHINE CLIENT EMAIL SENT:",
           clientResult.value.data?.id
         );
       }
     } else {
       console.error(
-        "CLIENT EMAIL REJECTED:",
+        "SHINE CLIENT EMAIL REJECTED:",
         clientResult.reason
       );
     }
 
     /*
-    =======================================================
-    CHECK OWNER EMAIL
-    =======================================================
+    =====================================================
+    OWNER RESULT
+    =====================================================
     */
+
+    let ownerEmailSent =
+      false;
 
     if (
       ownerResult.status ===
       "fulfilled"
     ) {
-      if (ownerResult.value.error) {
+      if (
+        ownerResult.value.error
+      ) {
         console.error(
-          "OWNER EMAIL ERROR:",
+          "SHINE OWNER EMAIL ERROR:",
           ownerResult.value.error
         );
       } else {
-        ownerEmailSent = true;
+        ownerEmailSent =
+          true;
 
         console.log(
-          "OWNER BOOKING EMAIL SENT:",
+          "SHINE OWNER EMAIL SENT:",
           ownerResult.value.data?.id
         );
       }
     } else {
       console.error(
-        "OWNER EMAIL REJECTED:",
+        "SHINE OWNER EMAIL REJECTED:",
         ownerResult.reason
       );
     }
 
     /*
-    =======================================================
+    =====================================================
     FINAL RESULT
-    =======================================================
+    =====================================================
     */
 
     return {
@@ -366,23 +407,30 @@ export async function createBooking(
     };
 
   } catch (error) {
-
     /*
-    =======================================================
-    DATABASE / SERVER ERROR
-    =======================================================
+    =====================================================
+    EMAIL FAILURE
+
+    DATABASE BOOKING STILL EXISTS.
+    =====================================================
     */
 
     console.error(
-      "CREATE APPOINTMENT ERROR:",
+      "SHINE BOOKING EMAIL ERROR:",
       error
     );
 
     return {
-      success: false,
+      success: true,
 
-      message:
-        "We could not create your appointment. Please try again.",
+      appointmentId:
+        appointment.id,
+
+      emailSent: false,
+
+      clientEmailSent: false,
+
+      ownerEmailSent: false,
     };
   }
 }
