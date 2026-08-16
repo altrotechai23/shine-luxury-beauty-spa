@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* =========================================================
+   SHINE LUXURY BEAUTY SPA
+   Global Design System
+   ========================================================= */
+
 :root {
   --background: #faf8f5;
   --foreground: #1f1f1f;
@@ -7,24 +12,51 @@
   --card: #ffffff;
 
   --champagne: #c8a97e;
+  --champagne-light: #e2d1b7;
+
   --rose-gold: #b88972;
+  --rose-gold-light: #d9b9a7;
 
   --cream: #f5efe7;
-
   --beige: #e8ddd0;
 
   --espresso: #5d4037;
+  --espresso-light: #7a5b50;
 
   --luxury-black: #111111;
 
+  --muted: #77716b;
+  --muted-light: #a39d96;
+
+  --border: rgba(31, 31, 31, 0.08);
+  --border-light: rgba(255, 255, 255, 0.7);
+
   --radius: 1.25rem;
+  --radius-lg: 1.75rem;
+  --radius-xl: 2.25rem;
+
+  --shadow-soft:
+    0 10px 40px rgba(31, 25, 20, 0.06);
+
+  --shadow-luxury:
+    0 20px 70px rgba(31, 25, 20, 0.1);
+
+  --shadow-floating:
+    0 15px 50px rgba(31, 25, 20, 0.14);
 }
+
+/* =========================================================
+   RESET
+   ========================================================= */
 
 html {
   scroll-behavior: smooth;
+  background: var(--background);
 }
 
 body {
+  margin: 0;
+
   background: var(--background);
   color: var(--foreground);
 
@@ -35,9 +67,12 @@ body {
   text-rendering: optimizeLegibility;
 
   -webkit-font-smoothing: antialiased;
-
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
 
 h1,
 h2,
@@ -46,7 +81,14 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  letter-spacing: -0.03em;
+
+  letter-spacing: -0.035em;
+
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 ::selection {
@@ -54,48 +96,328 @@ h6 {
   color: white;
 }
 
+/* =========================================================
+   MEDIA
+   ========================================================= */
+
 img {
   user-select: none;
+  -webkit-user-drag: none;
 }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 button {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
 
 section {
   position: relative;
 }
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
 .container {
   width: min(92%, 1280px);
   margin-inline: auto;
 }
 
+/* =========================================================
+   LUXURY BACKGROUNDS
+   ========================================================= */
+
 .luxury-gradient {
   background:
-    radial-gradient(circle at top, rgba(200,169,126,.25), transparent 40%),
-    #faf8f5;
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(200, 169, 126, 0.22),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      #faf8f5 0%,
+      #f7f2ec 100%
+    );
 }
 
-.glass {
-  backdrop-filter: blur(20px);
-  background: rgba(255,255,255,.55);
-  border: 1px solid rgba(255,255,255,.5);
+.luxury-gradient-dark {
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(200, 169, 126, 0.12),
+      transparent 38%
+    ),
+    #111111;
 }
+
+/* =========================================================
+   GLASS
+   ========================================================= */
+
+.glass {
+  background: rgba(255, 255, 255, 0.62);
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  box-shadow:
+    0 10px 40px rgba(31, 25, 20, 0.05);
+}
+
+.glass-dark {
+  background: rgba(17, 17, 17, 0.68);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* =========================================================
+   TEXT GRADIENT
+   ========================================================= */
 
 .text-gradient {
   background: linear-gradient(
-      90deg,
-      var(--espresso),
-      var(--champagne)
+    90deg,
+    var(--espresso),
+    var(--champagne)
   );
 
   -webkit-background-clip: text;
+  background-clip: text;
+
   color: transparent;
 }
+
+/* =========================================================
+   PREMIUM DIVIDER
+   ========================================================= */
+
+.luxury-divider {
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(200, 169, 126, 0.45),
+      transparent
+    );
+}
+
+/* =========================================================
+   PREMIUM GLOW
+   ========================================================= */
+
+.luxury-glow {
+  box-shadow:
+    0 0 0 1px rgba(200, 169, 126, 0.08),
+    0 20px 80px rgba(200, 169, 126, 0.12);
+}
+
+/* =========================================================
+   PREMIUM CARD
+   ========================================================= */
+
+.luxury-card {
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  background: rgba(255, 255, 255, 0.82);
+
+  box-shadow: var(--shadow-soft);
+
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease;
+}
+
+.luxury-card:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(200, 169, 126, 0.3);
+
+  box-shadow: var(--shadow-luxury);
+}
+
+/* =========================================================
+   IOS STYLE SURFACE
+   ========================================================= */
+
+.ios-surface {
+  border-radius: 2rem;
+
+  background: rgba(255, 255, 255, 0.78);
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+
+  box-shadow:
+    0 12px 45px rgba(31, 25, 20, 0.08);
+}
+
+/* =========================================================
+   IOS STYLE BUTTON
+   ========================================================= */
+
+.ios-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 48px;
+
+  padding-inline: 1.25rem;
+
+  border-radius: 999px;
+
+  font-size: 0.875rem;
+
+  font-weight: 600;
+
+  letter-spacing: -0.01em;
+
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.ios-button:active {
+  transform: scale(0.96);
+}
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
+
+.image-luxury {
+  overflow: hidden;
+  position: relative;
+}
+
+.image-luxury img {
+  transition:
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.image-luxury:hover img {
+  transform: scale(1.04);
+}
+
+/* =========================================================
+   SHIMMER
+   ========================================================= */
 
 @keyframes shimmer {
   100% {
     transform: translateX(200%);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+
+  position: absolute;
+
+  inset-block: 0;
+
+  left: -100%;
+
+  width: 50%;
+
+  transform: skewX(-20deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.35),
+      transparent
+    );
+
+  animation: shimmer 2.5s infinite;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(93, 64, 55, 0.22);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(93, 64, 55, 0.35);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .container {
+    width: min(91%, 1280px);
+  }
+
+  body {
+    overscroll-behavior-x: none;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
