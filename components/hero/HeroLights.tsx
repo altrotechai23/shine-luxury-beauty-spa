@@ -15,25 +15,38 @@ export default function HeroLights({
   x,
   y,
 }: HeroLightsProps) {
-  // Reverse mouse movement for the opposing ambient light.
-  const reverseX = useTransform(x, (value) => -value);
-  const reverseY = useTransform(y, (value) => -value);
+  const reverseX = useTransform(
+    x,
+    (value) => -value
+  );
+
+  const reverseY = useTransform(
+    y,
+    (value) => -value
+  );
 
   return (
     <>
-      {/* Left Ambient Light */}
+      {/* Primary green light */}
+
       <motion.div
         aria-hidden="true"
         className="
           pointer-events-none
           absolute
-          -left-52
-          top-20
-          h-[620px]
-          w-[620px]
+
+          -left-64
+          top-10
+
+          h-[600px]
+          w-[600px]
+
           rounded-full
-          bg-[#62AAB5]/20
-          blur-[140px]
+
+          bg-[#728558]/18
+
+          blur-[150px]
+
           will-change-transform
         "
         style={{
@@ -42,19 +55,26 @@ export default function HeroLights({
         }}
       />
 
-      {/* Right Ambient Light */}
+      {/* Secondary teal light */}
+
       <motion.div
         aria-hidden="true"
         className="
           pointer-events-none
           absolute
-          right-[-220px]
-          top-[-120px]
-          h-[580px]
-          w-[580px]
+
+          -right-64
+          -top-32
+
+          h-[600px]
+          w-[600px]
+
           rounded-full
-          bg-[#D7C0A0]/15
-          blur-[140px]
+
+          bg-[#58A6AD]/20
+
+          blur-[150px]
+
           will-change-transform
         "
         style={{
@@ -63,24 +83,32 @@ export default function HeroLights({
         }}
       />
 
-      {/* Bottom Glow */}
+      {/* White luxury glow */}
+
       <motion.div
         aria-hidden="true"
         className="
           pointer-events-none
           absolute
-          bottom-[-250px]
+
+          bottom-[-260px]
           left-1/2
+
           h-[620px]
           w-[620px]
+
           -translate-x-1/2
+
           rounded-full
-          bg-[#62AAB5]/10
+
+          bg-white/8
+
           blur-[170px]
+
           will-change-transform
         "
         animate={{
-          opacity: [0.15, 0.32, 0.15],
+          opacity: [0.12, 0.24, 0.12],
           scale: [1, 1.05, 1],
         }}
         transition={{
@@ -92,4 +120,3 @@ export default function HeroLights({
     </>
   );
 }
-

@@ -8,7 +8,7 @@ export default function ServicesHeader() {
     <motion.div
       initial={{
         opacity: 0,
-        y: 40,
+        y: 24,
       }}
       whileInView={{
         opacity: 1,
@@ -16,183 +16,110 @@ export default function ServicesHeader() {
       }}
       viewport={{
         once: true,
+        amount: 0.2,
       }}
       transition={{
-        duration: 0.8,
+        duration: 0.6,
+        ease: "easeOut",
       }}
-      className="mx-auto max-w-3xl text-center"
+      className="
+        mx-auto
+        max-w-3xl
+        text-center
+      "
     >
-      {/* Premium Badge */}
+      {/* Badge */}
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          scale: 0.9,
-        }}
-        whileInView={{
-          opacity: 1,
-          scale: 1,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          delay: 0.1,
-          duration: 0.5,
-        }}
+      <div
         className="
           inline-flex
           items-center
           gap-3
-
           rounded-full
-
           border
           border-white/10
-
-          bg-white/5
-
-          px-6
-          py-3
-
-          backdrop-blur-2xl
-
-          shadow-[0_20px_60px_rgba(0,0,0,.25)]
+          bg-white/[0.04]
+          px-5
+          py-2.5
         "
       >
         <Sparkles
-          size={16}
+          size={15}
           className="text-[#62AAB5]"
         />
 
         <span
           className="
-            text-xs
-
+            text-[10px]
+            font-medium
             uppercase
-
-            tracking-[0.45em]
-
-            text-white/80
+            tracking-[0.35em]
+            text-white/65
           "
         >
           Signature Collection
         </span>
-      </motion.div>
+      </div>
 
       {/* Heading */}
 
-      <motion.h2
-        initial={{
-          opacity: 0,
-          y: 35,
-        }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          delay: 0.2,
-          duration: 0.7,
-        }}
+      <h2
         className="
-          mt-8
-
+          mt-7
           font-heading
-
           text-5xl
-
           font-medium
-
-          leading-tight
-
+          leading-[0.95]
           tracking-tight
-
           text-white
 
-          md:text-6xl
+          sm:text-6xl
+          lg:text-7xl
         "
       >
         Luxury Beauty
+
         <br />
 
         <span className="text-[#D7C0A0]">
           Treatments
         </span>
-      </motion.h2>
+      </h2>
 
-      {/* Divider */}
+      {/* Accent */}
 
-      <motion.div
-        initial={{
-          width: 0,
-        }}
-        whileInView={{
-          width: 120,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          delay: 0.4,
-          duration: 0.8,
-        }}
+      <div
         className="
           mx-auto
-          mt-8
+          mt-7
           h-px
-
+          w-20
           bg-gradient-to-r
-
           from-transparent
-
           via-[#62AAB5]
-
           to-transparent
         "
       />
 
       {/* Description */}
 
-      <motion.p
-        initial={{
-          opacity: 0,
-          y: 25,
-        }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          delay: 0.45,
-          duration: 0.8,
-        }}
+      <p
         className="
           mx-auto
-
-          mt-8
-
+          mt-7
           max-w-2xl
+          text-base
+          leading-7
+          text-white/55
 
-          text-lg
-
-          leading-9
-
-          text-white/70
-
-          md:text-xl
+          sm:text-lg
+          sm:leading-8
         "
       >
-        Discover handcrafted beauty rituals designed to restore
-        confidence, enhance natural elegance, and deliver an unforgettable
-        luxury experience using premium products and expert care.
-      </motion.p>
+        Discover handcrafted beauty rituals designed to
+        restore confidence, enhance natural elegance, and
+        deliver an unforgettable luxury experience.
+      </p>
     </motion.div>
   );
 }

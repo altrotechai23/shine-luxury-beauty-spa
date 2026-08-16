@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import {
   motion,
   useMotionValue,
+  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
@@ -12,8 +13,6 @@ import {
 import HeroBackground from "./HeroBackground";
 import HeroContent from "./HeroContent";
 import HeroFloatingCard from "./HeroFloatingCard";
-import HeroLights from "./HeroLights";
-import HeroParticles from "./HeroParticles";
 import HeroScroll from "./HeroScroll";
 
 interface HeroProps {
@@ -33,45 +32,55 @@ interface HeroProps {
 
 export default function Hero({ settings }: HeroProps) {
   const heroRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   /*
-   * -------------------------------------------------------
-   * Mouse Parallax
-   * -------------------------------------------------------
+   * ============================================================
+   * MOUSE PHYSICS
+   * ============================================================
    *
-   * Uses requestAnimationFrame so mousemove does not
-   * continuously trigger React renders.
-   *
-   * Disabled automatically on touch/coarse-pointer devices.
+   * Mouse movement is converted into a spring MotionValue.
+   * This gives the photography a subtle premium camera feel
+   * instead of directly following the cursor.
    */
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   const x = useSpring(mouseX, {
-    stiffness: 70,
-    damping: 25,
-    mass: 0.5,
+    stiffness: 55,
+    damping: 24,
+    mass: 0.7,
   });
 
   const y = useSpring(mouseY, {
-    stiffness: 70,
-    damping: 25,
-    mass: 0.5,
+    stiffness: 55,
+    damping: 24,
+    mass: 0.7,
   });
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     if (window.matchMedia("(pointer: coarse)").matches) {
       return;
     }
 
     let frame = 0;
+
     let nextX = 0;
     let nextY = 0;
 
     const handleMouseMove = (event: MouseEvent) => {
-      nextX = (event.clientX - window.innerWidth * 0.5) * 0.008;
-      nextY = (event.clientY - window.innerHeight * 0.5) * 0.008;
+      nextX =
+        (event.clientX - window.innerWidth * 0.5) *
+        0.004;
+
+      nextY =
+        (event.clientY - window.innerHeight * 0.5) *
+        0.004;
 
       if (frame !== 0) {
         return;
@@ -80,56 +89,97 @@ export default function Hero({ settings }: HeroProps) {
       frame = window.requestAnimationFrame(() => {
         mouseX.set(nextX);
         mouseY.set(nextY);
+
         frame = 0;
       });
     };
 
-    window.addEventListener("mousemove", handleMouseMove, {
-      passive: true,
-    });
+    window.addEventListener(
+      "mousemove",
+      handleMouseMove,
+      {
+        passive: true,
+      }
+    );
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener(
+        "mousemove",
+        handleMouseMove
+      );
 
       if (frame !== 0) {
         window.cancelAnimationFrame(frame);
       }
     };
-  }, [mouseX, mouseY]);
+  }, [
+    mouseX,
+    mouseY,
+    prefersReducedMotion,
+  ]);
 
   /*
-   * -------------------------------------------------------
-   * Scroll Parallax
-   * -------------------------------------------------------
+   * ============================================================
+   * SCROLL PHYSICS
+   * ============================================================
+   *
+   * useScroll gives us the Hero's progress.
+   *
+   * useSpring then softens the raw scroll value so the
+   * background and content feel physically connected to the
+   * user's scrolling rather than mechanically attached to it.
    */
 
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
+ const { scrollYProgress } = useScroll({
+  target: heroRef,
+  offset: ["start start", "end start"],
+});
 
-  const backgroundScale = useTransform(
+
+
+  const smoothScroll = useSpring(
     scrollYProgress,
-    [0, 1],
-    [1, 1.08]
+    {
+      stiffness: 90,
+      damping: 28,
+      mass: 0.55,
+      restDelta: 0.001,
+    }
   );
 
-  const backgroundY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, 100]
-  );
+  /*
+   * Background remains visually stable while receiving
+   * only a very subtle camera movement.
+   */
+
+  
+
+ 
+
+  /*
+   * Main content gently lifts as the user scrolls.
+   */
 
   const contentY = useTransform(
-    scrollYProgress,
-    [0, 0.85],
-    [0, -60]
-  );
+  scrollYProgress,
+  [0, 0.85],
+  [0, -60]
+);
 
-  const contentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.85],
-    [1, 0]
+const contentOpacity = useTransform(
+  scrollYProgress,
+  [0, 0.85],
+  [1, 0]
+);
+
+  /*
+   * Mobile should remain much more stable.
+   */
+
+  const mobileBackgroundY = useTransform(
+    smoothScroll,
+    [0, 1],
+    [0, 18]
   );
 
   return (
@@ -138,38 +188,24 @@ export default function Hero({ settings }: HeroProps) {
       className="
         relative
         isolate
-        min-h-screen
+        min-h-[100svh]
         overflow-hidden
-        bg-[#081B1F]
+        bg-[#728558]
       "
     >
-      {/* -------------------------------------------------------
-          Cinematic Background
-      -------------------------------------------------------- */}
+      {/* ========================================================
+          CINEMATIC BACKGROUND
+      ========================================================= */}
 
       <HeroBackground
         businessName={settings.businessName}
         x={x}
         y={y}
-        scale={backgroundScale}
-        backgroundY={backgroundY}
       />
 
-      {/* -------------------------------------------------------
-          Ambient Lights
-      -------------------------------------------------------- */}
-
-      {/* <HeroLights x={x} y={y} /> */}
-
-      {/* -------------------------------------------------------
-          Floating Particles
-      -------------------------------------------------------- */}
-
-      {/* <HeroParticles /> */}
-
-      {/* -------------------------------------------------------
-          Main Content
-      -------------------------------------------------------- */}
+      {/* ========================================================
+          MAIN CONTENT
+      ========================================================= */}
 
       <motion.div
         style={{
@@ -180,7 +216,7 @@ export default function Hero({ settings }: HeroProps) {
           relative
           z-20
           flex
-          min-h-screen
+          min-h-[100svh]
           items-center
         "
       >
@@ -191,30 +227,41 @@ export default function Hero({ settings }: HeroProps) {
             w-full
             max-w-7xl
             items-center
-            gap-12
-            px-6
+            gap-10
+            px-5
             pb-24
             pt-28
-            md:gap-16
+
+            sm:px-6
+
+            md:gap-14
+            md:px-8
             md:pb-28
             md:pt-36
-            lg:grid-cols-2
+
+            lg:grid-cols-[1.08fr_.92fr]
+            lg:gap-16
+
+            xl:px-10
           "
         >
-          {/* Left Content */}
-          <HeroContent settings={settings} />
+          {/* LEFT */}
 
-          {/* Right Floating Card */}
+          <HeroContent
+            settings={settings}
+          />
+
+          {/* RIGHT */}
+
           <HeroFloatingCard />
         </div>
       </motion.div>
 
-      {/* -------------------------------------------------------
-          Scroll Indicator
-      -------------------------------------------------------- */}
+      {/* ========================================================
+          SCROLL INDICATOR
+      ========================================================= */}
 
       <HeroScroll />
     </section>
   );
 }
-

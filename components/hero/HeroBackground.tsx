@@ -11,8 +11,6 @@ interface HeroBackgroundProps {
   businessName: string;
   x: MotionValue<number>;
   y: MotionValue<number>;
-  scale: MotionValue<number>;
-  backgroundY: MotionValue<number>;
 }
 
 const BACKGROUND_IMAGE =
@@ -22,223 +20,278 @@ export default function HeroBackground({
   businessName,
   x,
   y,
-  scale,
-  backgroundY,
 }: HeroBackgroundProps) {
   /*
-   * Derive the gold light movement directly from the source motion values.
-   * This keeps the animation reactive instead of using x.get() / y.get().
+   * ============================================================
+   * MOUSE PARALLAX
+   * ============================================================
    */
-  const goldX = useTransform(x, (value) => value * -0.35);
-  const goldY = useTransform(y, (value) => value * -0.35);
+
+  const imageX = useTransform(x, (value) => value * 0.25);
+  const imageY = useTransform(y, (value) => value * 0.18);
+
+  const lightX = useTransform(
+    x,
+    (value) => value * -0.45
+  );
+
+  const lightY = useTransform(
+    y,
+    (value) => value * -0.45
+  );
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      {/* ================================================================
-          Cinematic Background Image
-          ================================================================ */}
+    <>
+      {/* ========================================================
+          FIXED CINEMATIC BACKGROUND
+          ======================================================== */}
 
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          x,
-          y: backgroundY,
-          scale,
-          willChange: "transform",
-        }}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          fixed
+          inset-0
+          z-0
+          overflow-hidden
+        "
       >
-        <Image
-          src={BACKGROUND_IMAGE}
-          alt={businessName}
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="select-none object-cover object-center"
+        {/* ------------------------------------------------------
+            PHOTOGRAPHY
+
+            IMPORTANT:
+            The image is positioned HIGHER so the woman's
+            face remains visible.
+        ------------------------------------------------------ */}
+
+        <motion.div
+          className="
+            absolute
+            inset-[-2%]
+            will-change-transform
+          "
+          style={{
+            x: imageX,
+            y: imageY,
+          }}
+        >
+          <Image
+            src={BACKGROUND_IMAGE}
+            alt={businessName}
+            fill
+            priority
+            quality={85}
+            sizes="100vw"
+            className="
+              select-none
+              object-cover
+
+              /* Desktop: show the face */
+              object-[50%_18%]
+
+              /* Mobile: slightly higher */
+              max-md:object-[50%_15%]
+            "
+          />
+        </motion.div>
+
+        {/* ======================================================
+            PRIMARY BRAND COLOR WASH
+
+            #728558 = primary
+            #58A6AD = secondary
+        ====================================================== */}
+
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-br
+            from-[#728558]/80
+            via-[#728558]/42
+            to-[#58A6AD]/35
+          "
         />
-      </motion.div>
 
-      {/* ================================================================
-          Primary Overlay
-          ================================================================ */}
+        {/* ======================================================
+            DARK LEFT GRADIENT
 
-      <div
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          bg-gradient-to-r
-          from-[#081B1F]/95
-          via-[#0F2E35]/65
-          to-[#081B1F]/35
-        "
-      />
+            Keeps the white heading readable.
+        ====================================================== */}
 
-      {/* ================================================================
-          Bottom Fade
-          ================================================================ */}
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-r
+            from-black/75
+            via-black/38
+            to-transparent
 
-      <div
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          bg-gradient-to-t
-          from-[#081B1F]
-          via-[#081B1F]/15
-          to-transparent
-        "
-      />
+            lg:from-black/78
+            lg:via-black/32
+            lg:to-transparent
+          "
+        />
 
-      {/* ================================================================
-          Luxury Tint
-          ================================================================ */}
+        {/* ======================================================
+            BOTTOM DARK/BRAND FADE
+        ====================================================== */}
 
-      <div
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          bg-[#081B1F]/20
-        "
-      />
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-t
+            from-black/65
+            via-transparent
+            to-black/15
+          "
+        />
 
-      {/* ================================================================
-          Premium Noise
-          ================================================================ */}
+        {/* ======================================================
+            TEAL ATMOSPHERE
+        ====================================================== */}
 
-      <div
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          opacity-[0.025]
-          mix-blend-soft-light
-          bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)]
-          [background-size:24px_24px]
-        "
-      />
+        <motion.div
+          className="
+            absolute
+            -left-56
+            -top-48
+            h-[650px]
+            w-[650px]
+            rounded-full
+            bg-[#58A6AD]/20
+            blur-[150px]
+          "
+          style={{
+            x,
+            y,
+            willChange: "transform",
+          }}
+        />
 
-      {/* ================================================================
-          Ambient Cyan Light
-          ================================================================ */}
+        {/* ======================================================
+            PRIMARY GREEN ATMOSPHERE
+        ====================================================== */}
 
-      <motion.div
-        className="
-          pointer-events-none
-          absolute
-          -left-72
-          -top-52
-          h-[900px]
-          w-[900px]
-          rounded-full
-          bg-[#62AAB5]/20
-          blur-[160px]
-        "
-        style={{
-          x,
-          y,
-          willChange: "transform",
-        }}
-      />
+        <motion.div
+          className="
+            absolute
+            -right-64
+            -top-32
+            h-[700px]
+            w-[700px]
+            rounded-full
+            bg-[#728558]/25
+            blur-[160px]
+          "
+          style={{
+            x: lightX,
+            y: lightY,
+            willChange: "transform",
+          }}
+        />
 
-      {/* ================================================================
-          Gold Light
-          ================================================================ */}
+        {/* ======================================================
+            WHITE LUXURY LIGHT
+        ====================================================== */}
 
-      <motion.div
-        className="
-          pointer-events-none
-          absolute
-          -right-72
-          top-0
-          h-[700px]
-          w-[700px]
-          rounded-full
-          bg-[#D7C0A0]/15
-          blur-[160px]
-        "
-        style={{
-          x: goldX,
-          y: goldY,
-          willChange: "transform",
-        }}
-      />
+        <motion.div
+          className="
+            absolute
+            right-[8%]
+            top-[16%]
+            h-72
+            w-72
+            rounded-full
+            bg-white/10
+            blur-[110px]
+          "
+          animate={{
+            opacity: [0.15, 0.28, 0.15],
+            scale: [1, 1.08, 1],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
 
-      {/* ================================================================
-          Bottom Cyan Glow
-          ================================================================ */}
+        {/* ======================================================
+            SECONDARY TEAL BOTTOM GLOW
+        ====================================================== */}
 
-      <motion.div
-        className="
-          pointer-events-none
-          absolute
-          bottom-[-280px]
-          left-1/2
-          h-[900px]
-          w-[900px]
-          -translate-x-1/2
-          rounded-full
-          bg-[#62AAB5]/10
-          blur-[180px]
-        "
-        animate={{
-          opacity: [0.15, 0.3, 0.15],
-          scale: [1, 1.05, 1],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          willChange: "transform, opacity",
-        }}
-      />
+        <motion.div
+          className="
+            absolute
+            bottom-[-320px]
+            left-1/2
+            h-[800px]
+            w-[800px]
+            -translate-x-1/2
+            rounded-full
+            bg-[#58A6AD]/18
+            blur-[170px]
+          "
+          animate={{
+            opacity: [0.15, 0.26, 0.15],
+            scale: [1, 1.06, 1],
+          }}
+          transition={{
+            duration: 11,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
 
-      {/* ================================================================
-          Floating Highlight
-          ================================================================ */}
+        {/* ======================================================
+            SUBTLE FILM GRAIN
+        ====================================================== */}
 
-      <motion.div
-        className="
-          pointer-events-none
-          absolute
-          right-32
-          top-40
-          h-56
-          w-56
-          rounded-full
-          bg-white/10
-          blur-[100px]
-        "
-        animate={{
-          x: [0, 40, 0],
-          y: [0, -30, 0],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          willChange: "transform, opacity",
-        }}
-      />
+        <div
+          className="
+            absolute
+            inset-0
+            opacity-[0.025]
+            mix-blend-overlay
+            bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)]
+            [background-size:20px_20px]
+          "
+        />
 
-      {/* ================================================================
-          Luxury Vignette
-          ================================================================ */}
+        {/* ======================================================
+            CINEMATIC VIGNETTE
+        ====================================================== */}
 
-      <div
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          shadow-[inset_0_0_300px_rgba(0,0,0,0.55)]
-        "
-      />
-    </div>
+        <div
+          className="
+            absolute
+            inset-0
+            shadow-[inset_0_0_260px_rgba(0,0,0,0.55)]
+          "
+        />
+
+        {/* ======================================================
+            BOTTOM BRAND FADE
+
+            Primary color #728558
+        ====================================================== */}
+
+        <div
+          className="
+            absolute
+            inset-x-0
+            bottom-0
+            h-[38%]
+            bg-gradient-to-t
+            from-[#728558]
+            via-[#728558]/35
+            to-transparent
+          "
+        />
+      </div>
+    </>
   );
 }

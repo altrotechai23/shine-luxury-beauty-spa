@@ -39,10 +39,15 @@ export default function HeroStats() {
   return (
     <div
       className="
-        mt-16
+        mt-10
+
         grid
-        gap-5
+        grid-cols-1
+        gap-3
+
+        sm:mt-14
         sm:grid-cols-3
+        sm:gap-4
       "
     >
       {STATS.map((stat) => {
@@ -55,150 +60,162 @@ export default function HeroStats() {
               group
               relative
               overflow-hidden
-              rounded-[30px]
+
+              rounded-[24px]
+
               border
-              border-white/10
-              bg-white/[0.07]
-              p-7
-              shadow-[0_16px_45px_rgba(0,0,0,.2)]
-              backdrop-blur-xl
-              transition-transform
+              border-white/15
+
+              bg-white/[0.09]
+
+              p-5
+
+              shadow-[0_18px_50px_rgba(0,0,0,.16)]
+
+              backdrop-blur-2xl
+
+              transition-all
               duration-300
-              ease-out
-              hover:-translate-y-2
-              hover:scale-[1.01]
+
+              hover:-translate-y-1
+              hover:bg-white/[0.13]
+
+              sm:rounded-[28px]
+              sm:p-6
             "
           >
-            {/* ============================================================
-                Glass Highlight
-                ============================================================ */}
+            {/* Top glass reflection */}
 
             <div
               aria-hidden="true"
               className="
                 pointer-events-none
                 absolute
-                inset-0
-                rounded-[30px]
+                inset-x-0
+                top-0
+                h-20
+
                 bg-gradient-to-b
-                from-white/10
-                via-transparent
+                from-white/12
                 to-transparent
-                opacity-70
               "
             />
 
-            {/* ============================================================
-                Static Ambient Glow
-                ============================================================ */}
+            {/* Ambient glow */}
 
             <div
               aria-hidden="true"
               className="
                 pointer-events-none
                 absolute
-                -right-12
-                -top-12
-                h-32
-                w-32
+                -right-10
+                -top-10
+                h-28
+                w-28
+
                 rounded-full
-                bg-[#62AAB5]/15
-                blur-[55px]
+
+                bg-[#58A6AD]/20
+
+                blur-[50px]
+
+                opacity-70
+
                 transition-opacity
                 duration-300
+
                 group-hover:opacity-100
               "
             />
 
-            {/* ============================================================
-                Icon
-                ============================================================ */}
+            {/* Icon */}
 
             <div
               className="
                 relative
+
                 flex
-                h-12
-                w-12
+                h-10
+                w-10
                 items-center
                 justify-center
+
                 rounded-2xl
+
                 bg-gradient-to-br
-                from-[#62AAB5]
-                to-[#4D8E99]
+                from-[#728558]
+                to-[#58A6AD]
+
                 text-white
-                shadow-lg
+
+                shadow-[0_10px_25px_rgba(88,166,173,.22)]
+
                 transition-transform
                 duration-300
-                ease-out
-                group-hover:rotate-6
+
                 group-hover:scale-105
               "
             >
               <Icon
-                size={22}
-                strokeWidth={2}
+                size={19}
+                strokeWidth={1.8}
                 aria-hidden="true"
               />
             </div>
 
-            {/* ============================================================
-                Number
-                ============================================================ */}
+            {/* Number */}
 
             <h3
               className="
                 relative
-                mt-6
+                mt-5
+
                 font-heading
-                text-4xl
+                text-3xl
                 font-semibold
-                text-[#D7C0A0]
-                transition-transform
-                duration-300
-                ease-out
-                group-hover:translate-x-1
+                leading-none
+
+                text-white
               "
             >
               {stat.number}
             </h3>
 
-            {/* ============================================================
-                Title
-                ============================================================ */}
+            {/* Title */}
 
             <p
               className="
                 relative
                 mt-3
-                text-sm
+
+                text-[9px]
+                font-medium
                 uppercase
-                tracking-[0.28em]
-                text-white/90
+                tracking-[0.25em]
+
+                text-white/85
               "
             >
               {stat.title}
             </p>
 
-            {/* ============================================================
-                Subtitle
-                ============================================================ */}
+            {/* Subtitle */}
 
             <p
               className="
                 relative
                 mt-2
-                text-sm
-                leading-6
-                text-white/60
+
+                text-xs
+                leading-5
+
+                text-white/55
               "
             >
               {stat.subtitle}
             </p>
 
-            {/* ============================================================
-                Bottom Accent
-                ============================================================ */}
+            {/* Bottom accent */}
 
             <div
               aria-hidden="true"
@@ -206,17 +223,21 @@ export default function HeroStats() {
                 absolute
                 bottom-0
                 left-0
+
                 h-[2px]
                 w-full
+
                 origin-left
                 scale-x-0
+
                 bg-gradient-to-r
-                from-[#62AAB5]
-                via-[#D7C0A0]
+                from-[#728558]
+                via-[#58A6AD]
                 to-transparent
+
                 transition-transform
-                duration-300
-                ease-out
+                duration-500
+
                 group-hover:scale-x-100
               "
             />

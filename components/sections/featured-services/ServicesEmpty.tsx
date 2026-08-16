@@ -13,7 +13,7 @@ export default function ServicesEmpty() {
     <motion.div
       initial={{
         opacity: 0,
-        y: 50,
+        y: 24,
       }}
       whileInView={{
         opacity: 1,
@@ -23,125 +23,88 @@ export default function ServicesEmpty() {
         once: true,
       }}
       transition={{
-        duration: 0.8,
+        duration: 0.6,
+        ease: "easeOut",
       }}
       className="
         relative
-        mt-20
+        mt-16
         overflow-hidden
-
-        rounded-[40px]
+        rounded-[32px]
 
         border
         border-white/10
 
-        bg-white/5
+        bg-[#10282C]
 
-        p-12
+        px-7
+        py-12
 
         text-center
 
-        backdrop-blur-3xl
-
-        lg:p-20
+        sm:px-12
+        sm:py-16
       "
     >
-      {/* Background Glow */}
+      {/* Accent */}
 
       <div
+        aria-hidden="true"
         className="
+          pointer-events-none
           absolute
           left-1/2
           top-1/2
-
-          h-[520px]
-          w-[520px]
-
-          -translate-x-1/2
-          -translate-y-1/2
-
-          rounded-full
-
-          bg-[#62AAB5]/10
-
-          blur-[170px]
-        "
-      />
-
-      <div
-        className="
-          absolute
-
-          right-[-120px]
-          top-[-120px]
-
           h-72
           w-72
-
+          -translate-x-1/2
+          -translate-y-1/2
           rounded-full
-
-          bg-[#D7C0A0]/10
-
-          blur-[150px]
+          bg-[#62AAB5]/10
+          blur-[110px]
         "
       />
 
       <div className="relative z-10">
-
         {/* Icon */}
 
-        <motion.div
-          animate={{
-            y: [0, -10, 0],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 4,
-          }}
+        <div
           className="
             mx-auto
-
             flex
-
-            h-24
-            w-24
-
+            h-20
+            w-20
             items-center
             justify-center
-
             rounded-full
 
-            bg-gradient-to-br
+            border
+            border-[#62AAB5]/20
 
-            from-[#62AAB5]
-
-            to-[#4F95A0]
-
-            shadow-[0_20px_70px_rgba(98,170,181,.45)]
+            bg-[#62AAB5]/10
           "
         >
           <Sparkles
-            size={34}
-            className="text-white"
+            size={30}
+            className="text-[#62AAB5]"
           />
-        </motion.div>
+        </div>
 
         {/* Heading */}
 
         <h2
           className="
-            mt-10
-
+            mt-8
             font-heading
-
             text-4xl
-
+            leading-tight
             text-white
 
-            md:text-5xl
+            sm:text-5xl
           "
         >
           Luxury Treatments
+
           <br />
 
           <span className="text-[#D7C0A0]">
@@ -154,143 +117,93 @@ export default function ServicesEmpty() {
         <p
           className="
             mx-auto
+            mt-6
+            max-w-xl
+            text-sm
+            leading-7
+            text-white/55
 
-            mt-8
-
-            max-w-2xl
-
-            text-lg
-
-            leading-9
-
-            text-white/70
+            sm:text-base
+            sm:leading-8
           "
         >
-          We are carefully preparing an exclusive collection of
-          premium beauty treatments designed to deliver an
+          We are carefully preparing an exclusive collection
+          of premium beauty treatments designed to deliver an
           exceptional luxury experience.
-
-          <br />
-          <br />
-
-          In the meantime, we would love to help you personally.
         </p>
 
-        {/* Buttons */}
+        {/* Actions */}
 
         <div
           className="
-            mt-12
-
+            mt-8
             flex
-
-            flex-wrap
-
+            flex-col
             justify-center
+            gap-3
 
-            gap-5
+            sm:flex-row
           "
         >
-          <motion.div
-            whileHover={{
-              scale: 1.05,
-              y: -4,
-            }}
-            whileTap={{
-              scale: .96,
-            }}
+          <Link
+            href="/booking"
+            className="
+              inline-flex
+              min-h-12
+              items-center
+              justify-center
+              gap-3
+              rounded-full
+              bg-[#62AAB5]
+              px-7
+              font-semibold
+              text-white
+
+              transition
+              active:scale-[0.97]
+            "
           >
-            <Link
-              href="/booking"
-              className="
-                inline-flex
+            <CalendarDays size={18} />
+            Book Consultation
+            <ArrowRight size={17} />
+          </Link>
 
-                items-center
+          <Link
+            href="/contact"
+            className="
+              inline-flex
+              min-h-12
+              items-center
+              justify-center
+              rounded-full
+              border
+              border-white/10
+              bg-white/[0.05]
+              px-7
+              text-sm
+              font-medium
+              text-white
 
-                gap-3
-
-                rounded-full
-
-                bg-[#62AAB5]
-
-                px-8
-
-                py-5
-
-                font-semibold
-
-                text-white
-
-                shadow-[0_20px_60px_rgba(98,170,181,.35)]
-              "
-            >
-              <CalendarDays size={20} />
-
-              Book Consultation
-
-              <ArrowRight size={18} />
-            </Link>
-          </motion.div>
-
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            whileTap={{
-              scale: .97,
-            }}
+              transition
+              hover:bg-white/10
+              active:scale-[0.97]
+            "
           >
-            <Link
-              href="/contact"
-              className="
-                inline-flex
-
-                items-center
-
-                rounded-full
-
-                border
-
-                border-white/15
-
-                bg-white/10
-
-                px-8
-
-                py-5
-
-                text-white
-
-                backdrop-blur-xl
-
-                transition
-
-                hover:bg-white/15
-              "
-            >
-              Contact Us
-            </Link>
-          </motion.div>
+            Contact Us
+          </Link>
         </div>
-
-        {/* Bottom Message */}
 
         <p
           className="
-            mt-12
-
-            text-sm
-
+            mt-8
+            text-[9px]
             uppercase
-
             tracking-[0.35em]
-
-            text-white/45
+            text-white/25
           "
         >
           Luxury • Elegance • Confidence
         </p>
-
       </div>
     </motion.div>
   );

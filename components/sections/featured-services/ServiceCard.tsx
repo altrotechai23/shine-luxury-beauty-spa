@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import type { Prisma } from "@prisma/client";
 
@@ -16,6 +15,7 @@ type Service = Prisma.ServiceGetPayload<{
 
 interface Props {
   service: Service;
+  priority?: boolean;
 }
 
 const FALLBACK_IMAGE =
@@ -23,198 +23,205 @@ const FALLBACK_IMAGE =
 
 export default function ServiceCard({
   service,
+  priority = false,
 }: Props) {
   return (
-    <motion.article
-      variants={{
-        hidden: {
-          opacity: 0,
-          y: 60,
-        },
-        show: {
-          opacity: 1,
-          y: 0,
-        },
-      }}
-      whileHover={{
-        y: -12,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 220,
-        damping: 18,
-      }}
+    <article
       className="
         group
         relative
+        flex
+        min-w-[88vw]
+        shrink-0
+        snap-center
+
         overflow-hidden
 
-        rounded-[34px]
+        rounded-[30px]
 
         border
         border-white/10
 
-        bg-white/5
+        bg-[#10282C]
 
-        backdrop-blur-3xl
+        shadow-[0_20px_60px_rgba(0,0,0,.28)]
 
-        shadow-[0_25px_70px_rgba(0,0,0,.25)]
+        sm:min-w-[620px]
+
+        md:min-w-[700px]
+
+        lg:min-w-[760px]
+
+        xl:min-w-[820px]
+
+        [contain:layout_paint]
+
+        transition-transform
+        duration-300
+        ease-out
+
+        lg:hover:-translate-y-2
       "
     >
-      {/* Hover Glow */}
+      {/* =====================================================
+          IMAGE
+      ===================================================== */}
 
-      <motion.div
+      <div
         className="
-          absolute
-          inset-0
-          opacity-0
-          transition-opacity
-          duration-500
-          group-hover:opacity-100
+          relative
+          h-[260px]
+          w-[42%]
+          shrink-0
+          overflow-hidden
+
+          sm:h-[300px]
+
+          md:h-[320px]
+
+          lg:h-[340px]
         "
       >
-        <div
+        <Image
+          src={service.image || FALLBACK_IMAGE}
+          alt={service.title}
+          fill
+          priority={priority}
+          quality={78}
+          sizes="
+            (max-width: 640px) 38vw,
+            340px
+          "
           className="
-            absolute
-            -left-24
-            -top-24
+            object-cover
 
-            h-72
-            w-72
+            transition-transform
+            duration-700
+            ease-out
 
-            rounded-full
-
-            bg-[#62AAB5]/15
-
-            blur-[120px]
+            group-hover:scale-[1.04]
           "
         />
 
-        <div
-          className="
-            absolute
-            bottom-0
-            right-0
-
-            h-48
-            w-48
-
-            rounded-full
-
-            bg-[#D7C0A0]/10
-
-            blur-[120px]
-          "
-        />
-      </motion.div>
-
-      {/* Image */}
-
-      <div className="relative aspect-[4/5] overflow-hidden">
-        <motion.div
-          whileHover={{
-            scale: 1.08,
-          }}
-          transition={{
-            duration: 0.8,
-          }}
-          className="h-full w-full"
-        >
-          <Image
-            src={service.image || FALLBACK_IMAGE}
-            alt={service.title}
-            fill
-            className="object-cover"
-          />
-        </motion.div>
-
-        {/* Overlay */}
+        {/* Image gradient */}
 
         <div
           className="
+            pointer-events-none
             absolute
             inset-0
 
-            bg-gradient-to-t
-
-            from-[#081B1F]
-
+            bg-gradient-to-r
+            from-transparent
             via-transparent
-
-            to-transparent
+            to-[#10282C]/90
           "
         />
 
         {/* Category */}
 
-        <div className="absolute left-5 top-5">
+        <div
+          className="
+            absolute
+            left-4
+            top-4
+
+            sm:left-5
+            sm:top-5
+          "
+        >
           <ServiceBadge>
             {service.category.name}
           </ServiceBadge>
         </div>
-
-        {/* Duration */}
-
-        <div className="absolute right-5 top-5">
-          <ServiceBadge icon={<Clock3 size={14} />}>
-            {service.duration} mins
-          </ServiceBadge>
-        </div>
       </div>
 
-      {/* Content */}
+      {/* =====================================================
+          CONTENT
+      ===================================================== */}
 
-      <div className="relative z-10 p-8">
+      <div
+        className="
+          flex
+          min-w-0
+          flex-1
+          flex-col
+          justify-center
 
-        {/* Price */}
+          px-6
+          py-7
 
-        <div className="mb-6">
+          sm:px-8
+          sm:py-8
 
-          <p
-            className="
-              text-xs
+          lg:px-10
+        "
+      >
+        {/* Top row */}
 
-              uppercase
+        <div
+          className="
+            flex
+            items-start
+            justify-between
+            gap-4
+          "
+        >
+          <div>
+            <p
+              className="
+                text-[10px]
+                font-medium
+                uppercase
+                tracking-[0.3em]
+                text-white/40
+              "
+            >
+              Starting From
+            </p>
 
-              tracking-[0.35em]
+            <p
+              className="
+                mt-1
+                font-heading
+                text-3xl
+                text-[#D7C0A0]
 
-              text-white/50
-            "
+                sm:text-4xl
+              "
+            >
+              R{service.price}
+            </p>
+          </div>
+
+          {/* Duration */}
+
+          <ServiceBadge
+            icon={<Clock3 size={13} />}
           >
-            Starting From
-          </p>
-
-          <h4
-            className="
-              mt-2
-
-              text-4xl
-
-              font-heading
-
-              text-[#D7C0A0]
-            "
-          >
-            R{service.price}
-          </h4>
-
+            {service.duration} mins
+          </ServiceBadge>
         </div>
 
         {/* Title */}
 
         <h3
           className="
-            text-3xl
+            mt-6
 
             font-heading
 
+            text-3xl
+            leading-[1.05]
+
             text-white
 
-            transition
+            sm:text-4xl
 
+            transition-colors
             duration-300
 
-            group-hover:text-[#62AAB5]
+            lg:group-hover:text-[#62AAB5]
           "
         >
           {service.title}
@@ -224,84 +231,118 @@ export default function ServiceCard({
 
         <p
           className="
-            mt-5
+            mt-4
 
-            line-clamp-3
+            line-clamp-2
 
-            leading-8
+            max-w-xl
 
-            text-white/65
+            text-sm
+            leading-7
+
+            text-white/55
+
+            sm:text-base
           "
         >
           {service.description}
         </p>
 
-        {/* CTA */}
+        {/* Bottom CTA */}
 
-        <motion.div
-          whileHover={{
-            x: 6,
-          }}
-          className="mt-10"
+        <div
+          className="
+            mt-7
+            flex
+            items-center
+            justify-between
+            gap-4
+          "
         >
           <Link
             href="/booking"
             className="
               inline-flex
-
+              min-h-11
               items-center
-
               gap-3
 
-              font-medium
+              rounded-full
 
-              text-[#62AAB5]
+              bg-[#62AAB5]
 
-              transition-colors
+              px-5
+              py-2.5
 
-              hover:text-white
+              text-sm
+              font-semibold
+              text-white
+
+              shadow-[0_10px_30px_rgba(98,170,181,.20)]
+
+              transition-all
+              duration-300
+
+              hover:bg-[#71B7C1]
+
+              active:scale-[0.97]
             "
           >
             Reserve Experience
 
             <ArrowRight
-              size={18}
+              size={16}
               className="
                 transition-transform
-
                 duration-300
-
                 group-hover:translate-x-1
               "
             />
           </Link>
-        </motion.div>
 
+          {/* Decorative indicator */}
+
+          <div
+            aria-hidden="true"
+            className="
+              hidden
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-full
+
+              border
+              border-white/10
+
+              bg-white/[0.04]
+
+              text-[#62AAB5]
+
+              sm:flex
+            "
+          >
+            <ArrowRight size={16} />
+          </div>
+        </div>
       </div>
 
-      {/* Animated Border */}
+      {/* Premium edge */}
 
-      <motion.div
-        initial={{
-          opacity: 0,
-        }}
-        whileHover={{
-          opacity: 1,
-        }}
+      <div
+        aria-hidden="true"
         className="
           pointer-events-none
 
           absolute
-
           inset-0
 
-          rounded-[34px]
+          rounded-[30px]
 
           border
-
-          border-[#62AAB5]/40
+          border-white/[0.04]
         "
       />
-    </motion.article>
+    </article>
   );
 }

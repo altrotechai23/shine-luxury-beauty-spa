@@ -27,122 +27,191 @@ export default function FeaturedServices({
         relative
         overflow-hidden
         bg-[#081B1F]
-        py-28
-        lg:py-36
+        py-24
+        lg:py-32
       "
     >
-      {/* Background Glow */}
+      {/* =====================================================
+          AMBIENT BACKGROUND
+          Keep these static — no continuous animation.
+      ===================================================== */}
 
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          overflow-hidden
+        "
+      >
         <div
           className="
             absolute
-            left-[-14rem]
-            top-24
-
-            h-[38rem]
-            w-[38rem]
-
+            -left-56
+            top-20
+            h-[34rem]
+            w-[34rem]
             rounded-full
-
             bg-[#62AAB5]/10
-
-            blur-[180px]
+            blur-[140px]
           "
         />
 
         <div
           className="
             absolute
-            right-[-16rem]
+            -right-56
             bottom-0
-
-            h-[34rem]
-            w-[34rem]
-
+            h-[32rem]
+            w-[32rem]
             rounded-full
-
-            bg-[#D7C0A0]/10
-
-            blur-[180px]
+            bg-[#D7C0A0]/8
+            blur-[140px]
           "
         />
       </div>
 
-      <div
-        className="
-          relative
-          z-10
+      <div className="relative z-10 mx-auto max-w-[1400px]">
+        {/* Header */}
 
-          mx-auto
-
-          max-w-7xl
-
-          px-6
-        "
-      >
-        <ServicesHeader />
+        <div className="px-6">
+          <ServicesHeader />
+        </div>
 
         {services.length === 0 ? (
-          <ServicesEmpty />
+          <div className="px-6">
+            <ServicesEmpty />
+          </div>
         ) : (
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{
-              once: true,
-              amount: 0.2,
-            }}
-            variants={{
-              hidden: {},
-              show: {
-                transition: {
-                  staggerChildren: 0.12,
-                },
-              },
-            }}
-            className="
-              mt-20
+          <>
+            {/* =================================================
+                MOBILE / DESKTOP CAROUSEL
+            ================================================= */}
 
-              grid
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{
+                once: true,
+                amount: 0.15,
+              }}
+              transition={{
+                duration: 0.6,
+                ease: "easeOut",
+              }}
+              className="
+                mt-16
+                overflow-hidden
+                lg:mt-20
+              "
+            >
+              <div
+                className="
+                  flex
+                  snap-x
+                  snap-mandatory
+                  gap-5
+                  overflow-x-auto
+                  overscroll-x-contain
+                  px-6
+                  pb-8
 
-              gap-8
+                  [-ms-overflow-style:none]
+                  [scrollbar-width:none]
+                  [&::-webkit-scrollbar]:hidden
 
-              md:grid-cols-2
+                  md:gap-6
+                  lg:px-10
+                  xl:px-16
+                "
+              >
+                {services.map((service, index) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    priority={index === 0}
+                  />
+                ))}
 
-              xl:grid-cols-3
-            "
-          >
-            {services.map((service) => (
-              <ServiceCard
-                key={service.id}
-                service={service}
-              />
-            ))}
-          </motion.div>
+                {/* End spacing */}
+                <div
+                  aria-hidden="true"
+                  className="
+                    min-w-[1px]
+                    shrink-0
+                    md:min-w-4
+                  "
+                />
+              </div>
+
+              {/* =================================================
+                  SWIPE INDICATOR
+              ================================================= */}
+
+              <div
+                className="
+                  mt-2
+                  flex
+                  items-center
+                  justify-center
+                  gap-3
+                  px-6
+                "
+              >
+                <div
+                  className="
+                    h-px
+                    w-10
+                    bg-gradient-to-r
+                    from-transparent
+                    to-[#62AAB5]/60
+                  "
+                />
+
+                <span
+                  className="
+                    text-[10px]
+                    font-medium
+                    uppercase
+                    tracking-[0.3em]
+                    text-white/35
+                  "
+                >
+                  Swipe to explore
+                </span>
+
+                <div
+                  className="
+                    h-px
+                    w-10
+                    bg-gradient-to-l
+                    from-transparent
+                    to-[#62AAB5]/60
+                  "
+                />
+              </div>
+            </motion.div>
+          </>
         )}
 
         <ServicesCTA />
       </div>
 
-      {/* Bottom Fade */}
+      {/* =====================================================
+          SECTION BOTTOM FADE
+      ===================================================== */}
 
       <div
+        aria-hidden="true"
         className="
           pointer-events-none
-
           absolute
-
+          inset-x-0
           bottom-0
-          left-0
-          right-0
-
-          h-40
-
+          h-32
           bg-gradient-to-b
-
           from-transparent
-
           to-[#081B1F]
         "
       />
