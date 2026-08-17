@@ -15,12 +15,16 @@ type Service = Prisma.ServiceGetPayload<{
 
 interface Props {
   service: Service;
+  priority?: boolean;
 }
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop";
 
-export default function ServiceCard({ service }: Props) {
+export default function ServiceCard({
+  service,
+  priority = false,
+}: Props) {
   return (
     <article
       className="
@@ -32,6 +36,7 @@ export default function ServiceCard({ service }: Props) {
         min-w-[86vw]
         max-w-[680px]
         shrink-0
+        snap-start
         overflow-hidden
 
         rounded-[28px]
@@ -42,8 +47,6 @@ export default function ServiceCard({ service }: Props) {
         bg-[#0D252A]
 
         shadow-[0_20px_60px_rgba(0,0,0,.22)]
-
-        snap-start
 
         sm:h-[270px]
         sm:w-[520px]
@@ -76,12 +79,15 @@ export default function ServiceCard({ service }: Props) {
           src={service.image || FALLBACK_IMAGE}
           alt={service.title}
           fill
+          priority={priority}
           sizes="
-            (max-width: 640px) 35vw,
+            (max-width: 640px) 33vw,
             220px
           "
           className="
+            select-none
             object-cover
+
             transition-transform
             duration-700
             ease-out
@@ -90,10 +96,13 @@ export default function ServiceCard({ service }: Props) {
           "
         />
 
-        {/* Image shade */}
+        {/* =================================================
+            IMAGE SHADE
+        ================================================= */}
 
         <div
           className="
+            pointer-events-none
             absolute
             inset-0
 
@@ -104,7 +113,9 @@ export default function ServiceCard({ service }: Props) {
           "
         />
 
-        {/* Category */}
+        {/* =================================================
+            CATEGORY
+        ================================================= */}
 
         <div
           className="
@@ -141,13 +152,16 @@ export default function ServiceCard({ service }: Props) {
           lg:p-8
         "
       >
-        <div>
-          {/* Duration */}
+        <div className="min-w-0">
+          {/* =================================================
+              META
+          ================================================= */}
 
           <div className="flex items-center justify-between gap-3">
             <span
               className="
                 inline-flex
+                min-w-0
                 items-center
                 gap-1.5
 
@@ -164,16 +178,22 @@ export default function ServiceCard({ service }: Props) {
               <Clock3
                 size={13}
                 strokeWidth={1.7}
+                className="shrink-0"
               />
 
-              {service.duration} mins
+              <span className="truncate">
+                {service.duration} mins
+              </span>
             </span>
 
             <span
               className="
+                shrink-0
+
                 text-[10px]
                 uppercase
                 tracking-[0.15em]
+
                 text-[#62AAB5]/80
 
                 sm:text-xs
@@ -183,7 +203,9 @@ export default function ServiceCard({ service }: Props) {
             </span>
           </div>
 
-          {/* Price */}
+          {/* =================================================
+              PRICE
+          ================================================= */}
 
           <div className="mt-4 sm:mt-5">
             <p
@@ -191,6 +213,7 @@ export default function ServiceCard({ service }: Props) {
                 text-[9px]
                 uppercase
                 tracking-[0.25em]
+
                 text-white/40
 
                 sm:text-[10px]
@@ -216,7 +239,9 @@ export default function ServiceCard({ service }: Props) {
             </p>
           </div>
 
-          {/* Title */}
+          {/* =================================================
+              TITLE
+          ================================================= */}
 
           <h3
             className="
@@ -242,7 +267,9 @@ export default function ServiceCard({ service }: Props) {
             {service.title}
           </h3>
 
-          {/* Description */}
+          {/* =================================================
+              DESCRIPTION
+          ================================================= */}
 
           <p
             className="
@@ -264,9 +291,9 @@ export default function ServiceCard({ service }: Props) {
           </p>
         </div>
 
-        {/* =================================================
+        {/* ===================================================
             CTA
-        ================================================= */}
+        =================================================== */}
 
         <Link
           href="/booking"
@@ -292,7 +319,7 @@ export default function ServiceCard({ service }: Props) {
             sm:text-sm
           "
         >
-          Reserve Experience
+          <span>Reserve Experience</span>
 
           <ArrowRight
             size={16}
@@ -328,7 +355,9 @@ export default function ServiceCard({ service }: Props) {
         "
       />
 
-      {/* Small accent */}
+      {/* =====================================================
+          SMALL ATMOSPHERIC ACCENT
+      ===================================================== */}
 
       <div
         className="
