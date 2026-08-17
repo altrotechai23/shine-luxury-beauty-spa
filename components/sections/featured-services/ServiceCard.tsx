@@ -15,52 +15,46 @@ type Service = Prisma.ServiceGetPayload<{
 
 interface Props {
   service: Service;
-  priority?: boolean;
 }
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop";
 
-export default function ServiceCard({
-  service,
-  priority = false,
-}: Props) {
+export default function ServiceCard({ service }: Props) {
   return (
     <article
       className="
         group
         relative
         flex
-        min-w-[88vw]
+        h-[250px]
+        w-[86vw]
+        min-w-[86vw]
+        max-w-[680px]
         shrink-0
-        snap-center
-
         overflow-hidden
 
-        rounded-[30px]
+        rounded-[28px]
 
         border
         border-white/10
 
-        bg-[#10282C]
+        bg-[#0D252A]
 
-        shadow-[0_20px_60px_rgba(0,0,0,.28)]
+        shadow-[0_20px_60px_rgba(0,0,0,.22)]
 
-        sm:min-w-[620px]
+        snap-start
 
-        md:min-w-[700px]
+        sm:h-[270px]
+        sm:w-[520px]
+        sm:min-w-[520px]
 
-        lg:min-w-[760px]
+        lg:h-[290px]
+        lg:w-[620px]
+        lg:min-w-[620px]
 
-        xl:min-w-[820px]
-
-        [contain:layout_paint]
-
-        transition-transform
-        duration-300
-        ease-out
-
-        lg:hover:-translate-y-2
+        xl:w-[680px]
+        xl:min-w-[680px]
       "
     >
       {/* =====================================================
@@ -70,51 +64,43 @@ export default function ServiceCard({
       <div
         className="
           relative
-          h-[260px]
-          w-[42%]
+          h-full
+          w-[38%]
           shrink-0
           overflow-hidden
 
-          sm:h-[300px]
-
-          md:h-[320px]
-
-          lg:h-[340px]
+          sm:w-[40%]
         "
       >
         <Image
           src={service.image || FALLBACK_IMAGE}
           alt={service.title}
           fill
-          priority={priority}
-          quality={78}
           sizes="
-            (max-width: 640px) 38vw,
-            340px
+            (max-width: 640px) 35vw,
+            220px
           "
           className="
             object-cover
-
             transition-transform
             duration-700
             ease-out
 
-            group-hover:scale-[1.04]
+            sm:group-hover:scale-[1.04]
           "
         />
 
-        {/* Image gradient */}
+        {/* Image shade */}
 
         <div
           className="
-            pointer-events-none
             absolute
             inset-0
 
             bg-gradient-to-r
             from-transparent
             via-transparent
-            to-[#10282C]/90
+            to-[#0D252A]/70
           "
         />
 
@@ -123,11 +109,11 @@ export default function ServiceCard({
         <div
           className="
             absolute
-            left-4
-            top-4
+            left-3
+            top-3
 
-            sm:left-5
-            sm:top-5
+            sm:left-4
+            sm:top-4
           "
         >
           <ServiceBadge>
@@ -146,201 +132,219 @@ export default function ServiceCard({
           min-w-0
           flex-1
           flex-col
-          justify-center
+          justify-between
 
-          px-6
-          py-7
+          p-5
 
-          sm:px-8
-          sm:py-8
+          sm:p-7
 
-          lg:px-10
+          lg:p-8
         "
       >
-        {/* Top row */}
+        <div>
+          {/* Duration */}
 
-        <div
-          className="
-            flex
-            items-start
-            justify-between
-            gap-4
-          "
-        >
-          <div>
-            <p
+          <div className="flex items-center justify-between gap-3">
+            <span
               className="
+                inline-flex
+                items-center
+                gap-1.5
+
                 text-[10px]
                 font-medium
                 uppercase
-                tracking-[0.3em]
-                text-white/40
+                tracking-[0.18em]
+
+                text-white/45
+
+                sm:text-xs
               "
             >
-              Starting From
+              <Clock3
+                size={13}
+                strokeWidth={1.7}
+              />
+
+              {service.duration} mins
+            </span>
+
+            <span
+              className="
+                text-[10px]
+                uppercase
+                tracking-[0.15em]
+                text-[#62AAB5]/80
+
+                sm:text-xs
+              "
+            >
+              Signature
+            </span>
+          </div>
+
+          {/* Price */}
+
+          <div className="mt-4 sm:mt-5">
+            <p
+              className="
+                text-[9px]
+                uppercase
+                tracking-[0.25em]
+                text-white/40
+
+                sm:text-[10px]
+              "
+            >
+              Starting from
             </p>
 
             <p
               className="
                 mt-1
+
                 font-heading
-                text-3xl
+                text-2xl
+                leading-none
+
                 text-[#D7C0A0]
 
-                sm:text-4xl
+                sm:text-3xl
               "
             >
               R{service.price}
             </p>
           </div>
 
-          {/* Duration */}
+          {/* Title */}
 
-          <ServiceBadge
-            icon={<Clock3 size={13} />}
+          <h3
+            className="
+              mt-4
+
+              line-clamp-1
+
+              font-heading
+              text-xl
+              leading-tight
+
+              text-white
+
+              transition-colors
+              duration-300
+
+              sm:text-2xl
+              lg:text-3xl
+
+              sm:group-hover:text-[#62AAB5]
+            "
           >
-            {service.duration} mins
-          </ServiceBadge>
+            {service.title}
+          </h3>
+
+          {/* Description */}
+
+          <p
+            className="
+              mt-2
+
+              line-clamp-2
+
+              text-xs
+              leading-5
+
+              text-white/55
+
+              sm:mt-3
+              sm:text-sm
+              sm:leading-6
+            "
+          >
+            {service.description}
+          </p>
         </div>
 
-        {/* Title */}
+        {/* =================================================
+            CTA
+        ================================================= */}
 
-        <h3
+        <Link
+          href="/booking"
           className="
-            mt-6
+            mt-3
 
-            font-heading
+            inline-flex
+            w-fit
+            items-center
+            gap-2
 
-            text-3xl
-            leading-[1.05]
+            text-xs
+            font-medium
 
-            text-white
-
-            sm:text-4xl
+            text-[#62AAB5]
 
             transition-colors
             duration-300
 
-            lg:group-hover:text-[#62AAB5]
+            hover:text-white
+
+            sm:mt-4
+            sm:text-sm
           "
         >
-          {service.title}
-        </h3>
+          Reserve Experience
 
-        {/* Description */}
-
-        <p
-          className="
-            mt-4
-
-            line-clamp-2
-
-            max-w-xl
-
-            text-sm
-            leading-7
-
-            text-white/55
-
-            sm:text-base
-          "
-        >
-          {service.description}
-        </p>
-
-        {/* Bottom CTA */}
-
-        <div
-          className="
-            mt-7
-            flex
-            items-center
-            justify-between
-            gap-4
-          "
-        >
-          <Link
-            href="/booking"
+          <ArrowRight
+            size={16}
             className="
-              inline-flex
-              min-h-11
-              items-center
-              gap-3
-
-              rounded-full
-
-              bg-[#62AAB5]
-
-              px-5
-              py-2.5
-
-              text-sm
-              font-semibold
-              text-white
-
-              shadow-[0_10px_30px_rgba(98,170,181,.20)]
-
-              transition-all
+              transition-transform
               duration-300
 
-              hover:bg-[#71B7C1]
-
-              active:scale-[0.97]
+              sm:group-hover:translate-x-1
             "
-          >
-            Reserve Experience
-
-            <ArrowRight
-              size={16}
-              className="
-                transition-transform
-                duration-300
-                group-hover:translate-x-1
-              "
-            />
-          </Link>
-
-          {/* Decorative indicator */}
-
-          <div
-            aria-hidden="true"
-            className="
-              hidden
-              h-10
-              w-10
-              items-center
-              justify-center
-              rounded-full
-
-              border
-              border-white/10
-
-              bg-white/[0.04]
-
-              text-[#62AAB5]
-
-              sm:flex
-            "
-          >
-            <ArrowRight size={16} />
-          </div>
-        </div>
+          />
+        </Link>
       </div>
 
-      {/* Premium edge */}
+      {/* =====================================================
+          PREMIUM EDGE
+      ===================================================== */}
 
       <div
-        aria-hidden="true"
         className="
           pointer-events-none
-
           absolute
           inset-0
 
-          rounded-[30px]
+          rounded-[28px]
 
           border
           border-white/[0.04]
+
+          transition-colors
+          duration-300
+
+          sm:group-hover:border-[#62AAB5]/30
+        "
+      />
+
+      {/* Small accent */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          bottom-0
+          right-0
+
+          h-24
+          w-24
+
+          rounded-full
+
+          bg-[#62AAB5]/5
+
+          blur-[50px]
         "
       />
     </article>

@@ -26,7 +26,8 @@ export default function FeaturedServices({
       className="
         relative
         overflow-hidden
-        bg-[#081B1F]
+        bg-[#0f4c4f]
+        opacity-80
         py-24
         lg:py-32
       "
@@ -36,25 +37,9 @@ export default function FeaturedServices({
           Keep these static — no continuous animation.
       ===================================================== */}
 
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          overflow-hidden
-        "
-      >
+      <div  aria-hidden="true"  className="pointer-events-none  absolute  inset-0  overflow-hidden">
         <div
-          className="
-            absolute
-            -left-56
-            top-20
-            h-[34rem]
-            w-[34rem]
-            rounded-full
-            bg-[#62AAB5]/10
-            blur-[140px]
+          className="absolute  -left-56  top-20  h-[34rem]  w-[34rem]  rounded-full  bg-[#62AAB5]/10  blur-[140px]
           "
         />
 
